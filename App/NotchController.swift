@@ -8,7 +8,8 @@ import SwiftUI
 @MainActor
 final class NotchController {
     private let panel = NotchPanel()
-    private let layout = NotchLayout()
+    /// Shared with the menu bar item.
+    let layout = NotchLayout()
     private let content = TrackingView()
     private let feed = NowPlayingFeed()
     private let artwork = ArtworkLoader()

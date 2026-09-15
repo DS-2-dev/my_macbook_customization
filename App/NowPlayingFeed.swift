@@ -24,6 +24,8 @@ final class NowPlayingFeed {
     }
 
     private let client = NowPlayingClient()
+    /// The last good answer, kept for an instant start next time.
+    private let cache = AnswerCache.standard()
     private var loop: Task<Void, Never>?
     private var pauses: Set<Pause> = []
     private var observers: [(NotificationCenter, NSObjectProtocol)] = []
@@ -38,6 +40,15 @@ final class NowPlayingFeed {
         let distributed = DistributedNotificationCenter.default()
         observe(distributed, Notification.Name("com.apple.screenIsLocked")) { $0.pause(.locked) }
         observe(distributed, Notification.Name("com.apple.screenIsUnlocked")) { $0.resume(.locked) }
+        // A new service in the preferences: ask it straight away.
+        observe(NotificationCenter.default, .serviceURLDidChange) { $0.restart() }
+
+        // Whatever was last seen, straight away, while the first question is
+        // out. Recency still applies: a stale track won't show.
+        if let saved = cache.load() {
+            latest = saved
+            onUpdate?(saved)
+        }
         run()
     }
 
@@ -67,6 +78,14 @@ final class NowPlayingFeed {
         run()
     }
 
+    /// Asks now and carries on from there, unless something is holding it.
+    private func restart() {
+        loop?.cancel()
+        loop = nil
+        guard pauses.isEmpty else { return }
+        run()
+    }
+
     /// Asks now, then every `interval` until paused.
     private func run() {
         loop = Task { [weak self] in
@@ -90,6 +109,7 @@ final class NowPlayingFeed {
                     answer: \(answer.playing ? "playing" : "not playing", privacy: .public) \
                     \(answer.track ?? "no track", privacy: .public)\(art, privacy: .public)\(stale, privacy: .public)
                     """)
+                cache.save(answer)
             }
             latest = answer
             onUpdate?(answer)
