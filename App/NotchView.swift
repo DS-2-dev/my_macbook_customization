@@ -1,58 +1,93 @@
+import AppKit
 import NotchKit
 import SwiftUI
 
 /// Everything drawn in the panel. The controller animates the state changes
-/// (width, then height, then text); this only draws whatever state it's in.
+/// (width, then height, then text; a track arriving or going); this only
+/// draws whatever state it's in.
 struct NotchView: View {
     let layout: NotchLayout
 
-    /// Step 3's stand-in until real data arrives.
-    private let track = (status: "Listening now", title: "Nights", artist: "Frank Ocean")
-
     var body: some View {
-        let frames = NotchFrames(kind: layout.kind, shape: layout.shape, wide: layout.widthOpen, tall: layout.heightOpen)
+        let track = layout.track
+        let frames = NotchFrames(
+            kind: layout.kind,
+            shape: layout.shape,
+            wide: layout.widthOpen,
+            tall: layout.heightOpen,
+            visible: track != nil,
+            hasArt: track?.art != nil
+        )
         ZStack(alignment: .topLeading) {
             if NotchStyle.showsPanelBounds {
                 Rectangle()
                     .strokeBorder(Color.red.opacity(0.35), lineWidth: 1)
             }
-            if layout.hasSomethingToShow {
-                NotchSurface(geometry: frames.surface)
-                    .fill(NotchStyle.bezel)
 
-                // Clipped to the surface, so nothing ever draws outside the
-                // black, whatever the timing of the steps.
-                ZStack(alignment: .topLeading) {
-                    RoundedRectangle(cornerRadius: frames.artCornerRadius, style: .continuous)
-                        .fill(NotchStyle.placeholderArt)
-                        .frame(width: frames.art.width, height: frames.art.height)
-                        .offset(x: frames.art.minX, y: frames.art.minY)
+            NotchSurface(geometry: frames.surface)
+                .fill(NotchStyle.bezel)
 
+            // Clipped to the surface, so nothing ever draws outside the
+            // black, whatever the timing of the steps.
+            ZStack(alignment: .topLeading) {
+                if let track {
+                    artwork(track, frames)
                     if layout.showsDetails {
-                        details
+                        details(track)
                             .frame(width: frames.text.width, height: frames.text.height, alignment: .leading)
                             .offset(x: frames.text.minX, y: frames.text.minY)
                             .transition(.asymmetric(insertion: .opacity.combined(with: .offset(y: -3)), removal: .opacity))
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .mask(NotchSurface(geometry: frames.surface))
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .mask(NotchSurface(geometry: frames.surface))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        // The panel only takes clicks while open, and only on the surface.
+        .contentShape(NotchSurface(geometry: frames.surface))
+        .onTapGesture {
+            guard layout.expanded, let url = layout.track?.url else { return }
+            NSWorkspace.shared.open(url)
+        }
     }
 
-    private var details: some View {
+    @ViewBuilder
+    private func artwork(_ track: NowPlaying, _ frames: NotchFrames) -> some View {
+        if track.art != nil {
+            // Step 5 draws the real image here.
+            RoundedRectangle(cornerRadius: frames.artCornerRadius, style: .continuous)
+                .fill(NotchStyle.placeholderArt)
+                .frame(width: frames.art.width, height: frames.art.height)
+                .offset(x: frames.art.minX, y: frames.art.minY)
+        } else if !layout.heightOpen {
+            // No art: a small note in the wing, gone once the panel opens to text only.
+            Image(systemName: NotchStyle.noArtSymbol)
+                .font(.system(size: NotchStyle.noArtSymbolSize, weight: .semibold))
+                .foregroundStyle(NotchStyle.secondaryText)
+                .frame(width: frames.art.width, height: frames.art.height)
+                .offset(x: frames.art.minX, y: frames.art.minY)
+                .transition(.opacity)
+        }
+    }
+
+    private func details(_ track: NowPlaying) -> some View {
         VStack(alignment: .leading, spacing: NotchStyle.lineSpacing) {
-            Text(track.status)
-                .font(NotchStyle.statusFont)
-                .foregroundStyle(NotchStyle.tertiaryText)
-            Text(track.title)
+            // Redrawn every half minute, so "20 minutes ago" keeps counting
+            // between polls.
+            TimelineView(.periodic(from: .now, by: 30)) { context in
+                Text(track.status(at: context.date))
+                    .font(NotchStyle.statusFont)
+                    .foregroundStyle(NotchStyle.tertiaryText)
+            }
+            Text(track.track ?? "")
                 .font(NotchStyle.titleFont)
                 .foregroundStyle(NotchStyle.primaryText)
-            Text(track.artist)
-                .font(NotchStyle.artistFont)
-                .foregroundStyle(NotchStyle.secondaryText)
+            if let artist = track.artist {
+                Text(artist)
+                    .font(NotchStyle.artistFont)
+                    .foregroundStyle(NotchStyle.secondaryText)
+            }
         }
         .lineLimit(1)
         .truncationMode(.tail)
@@ -61,14 +96,15 @@ struct NotchView: View {
 
 /// Where everything goes, in the panel's top-left coordinates. Width and
 /// height open separately: `wide` alone is a bar the notch's height reaching
-/// the full width; `tall` drops it into the full panel.
+/// the full width; `tall` drops it into the full panel. Not `visible`, the
+/// surface shrinks to nothing in the middle of the notch, behind the hardware.
 struct NotchFrames {
     var surface: SurfaceGeometry
     var art: CGRect
     var artCornerRadius: CGFloat
     var text: CGRect
 
-    init(kind: NotchMetrics.Kind, shape: CGRect, wide: Bool, tall: Bool) {
+    init(kind: NotchMetrics.Kind, shape: CGRect, wide: Bool, tall: Bool, visible: Bool, hasArt: Bool) {
         let trailing = NotchStyle.wingSide == .trailing
         let small = NotchStyle.restingArtSize
         let big = NotchStyle.expandedArtSize
@@ -79,10 +115,6 @@ struct NotchFrames {
             : shape
         let open = NotchGeometry.expandedSurface(around: shape, size: NotchStyle.expandedSize)
 
-        // Width and height each come from whichever step they're at.
-        let horizontal = wide ? open : resting
-        let rect = CGRect(x: horizontal.minX, y: resting.minY, width: horizontal.width, height: tall ? open.height : resting.height)
-
         // The content area below the notch, where the big art and the text go.
         let contentTop = kind == .notch ? open.minY + shape.height : open.minY
         let bigArt = CGRect(
@@ -91,12 +123,37 @@ struct NotchFrames {
             width: big,
             height: big
         )
-        text = CGRect(
-            x: trailing ? open.minX + NotchStyle.contentPadding : bigArt.maxX + NotchStyle.textGap,
-            y: bigArt.minY,
-            width: open.width - big - NotchStyle.textGap - NotchStyle.contentPadding * 2,
-            height: big
-        )
+        if hasArt {
+            text = CGRect(
+                x: trailing ? open.minX + NotchStyle.contentPadding : bigArt.maxX + NotchStyle.textGap,
+                y: bigArt.minY,
+                width: open.width - big - NotchStyle.textGap - NotchStyle.contentPadding * 2,
+                height: big
+            )
+        } else {
+            // Text only: the whole width.
+            text = CGRect(
+                x: open.minX + NotchStyle.contentPadding,
+                y: bigArt.minY,
+                width: open.width - NotchStyle.contentPadding * 2,
+                height: big
+            )
+        }
+
+        guard visible else {
+            // Nothing to show: a sliver of nothing in the middle of the shape,
+            // so appearing is sliding out of the notch.
+            let middle = CGRect(x: shape.midX, y: shape.minY, width: 0, height: shape.height)
+            let radius = kind == .pill ? shape.height / 2 : 0
+            surface = SurfaceGeometry(rect: middle, topRadius: radius, bottomLeadingRadius: radius, bottomTrailingRadius: radius)
+            art = CGRect(x: shape.midX, y: shape.midY, width: 0, height: 0)
+            artCornerRadius = 0
+            return
+        }
+
+        // Width and height each come from whichever step they're at.
+        let horizontal = wide ? open : resting
+        let rect = CGRect(x: horizontal.minX, y: resting.minY, width: horizontal.width, height: tall ? open.height : resting.height)
 
         switch kind {
         case .notch:

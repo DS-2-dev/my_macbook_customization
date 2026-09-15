@@ -79,6 +79,17 @@ enum NotchStyle {
     /// After the lift starts, how long until it narrows back into the notch.
     static let narrowDelay: TimeInterval = 0.12
     static let narrowSpring = Animation.spring(response: 0.28, dampingFraction: 0.95)
+
+    /// Sliding out of the notch when something starts playing, back in when
+    /// nothing has for a while, and a new track arriving.
+    static let appearSpring = Animation.spring(response: 0.45, dampingFraction: 0.86)
+
+    // MARK: No art
+
+    /// Shown in the wing when a track has no art; the open panel is then
+    /// text only.
+    static let noArtSymbol = "music.note"
+    static let noArtSymbolSize: CGFloat = 12
     /// How long the pointer has to stay before the panel opens or closes, so
     /// sweeping across the top of the screen doesn't set it off.
     static let hoverInDelay: TimeInterval = 0.08

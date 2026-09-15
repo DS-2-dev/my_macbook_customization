@@ -10,6 +10,7 @@ final class NotchController {
     private let panel = NotchPanel()
     private let layout = NotchLayout()
     private let content = TrackingView()
+    private let feed = NowPlayingFeed()
     private var observers: [(NotificationCenter, NSObjectProtocol)] = []
     private var monitors: [Any] = []
     private let log = Logger(subsystem: "com.dantesmith.NowPlayingNotch", category: "geometry")
@@ -56,6 +57,29 @@ final class NotchController {
         }) {
             monitors.append(local)
         }
+
+        feed.onUpdate = { [weak self] answer in self?.show(answer) }
+        feed.start()
+    }
+
+    // MARK: Data
+
+    /// Puts an answer on the notch, or takes it off when nothing has played
+    /// recently. How recent is checked on every poll, so an old track ages
+    /// out even when the answer itself hasn't changed.
+    private func show(_ answer: NowPlaying?) {
+        let next = answer.flatMap { $0.isRecent(at: .now, within: NowPlayingFeed.recentWindow) ? $0 : nil }
+        guard next != layout.track else { return }
+        if next == nil, layout.expanded {
+            // Nothing left to show under the pointer: close before going.
+            pendingHover?.cancel()
+            pendingTarget = nil
+            layout.expanded = false
+            close()
+        }
+        let animation = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? nil : NotchStyle.appearSpring
+        withAnimation(animation) { layout.track = next }
+        log.notice("showing \(next.map { "\($0.track ?? "?") (\($0.playing ? "playing" : "last played"))" } ?? "nothing", privacy: .public)")
     }
 
     private func observe(_ center: NotificationCenter, _ name: Notification.Name, object: AnyObject? = nil) {
@@ -226,9 +250,10 @@ final class NotchLayout {
     var kind: NotchMetrics.Kind = .notch
     /// The collapsed shape inside the panel, top-left origin.
     var shape: CGRect = .zero
-    /// False when nothing has played recently: then nothing is drawn and the
-    /// notch is left as it is. Always true until real data arrives in step 4.
-    var hasSomethingToShow = true
+    /// What's on the notch: the latest answer if it's recent, otherwise nil,
+    /// and then nothing is drawn and the notch is left as it is.
+    var track: NowPlaying?
+    var hasSomethingToShow: Bool { track != nil }
     /// The pointer is over it, so it's opening or open.
     var expanded = false
     /// The steps of opening, each animated in turn by the controller.
