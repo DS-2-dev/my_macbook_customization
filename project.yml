@@ -1,0 +1,50 @@
+# Generates NowPlayingNotch.xcodeproj. Run `xcodegen generate` after editing.
+name: NowPlayingNotch
+options:
+  bundleIdPrefix: com.dantesmith
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
+    ARCHS: arm64
+    MARKETING_VERSION: "0.1"
+    CURRENT_PROJECT_VERSION: "1"
+    # Free Apple ID: "Sign to Run Locally" (ad-hoc). No team, no provisioning profile.
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: NO
+
+packages:
+  NotchKit:
+    path: Packages/NotchKit
+
+targets:
+  NowPlayingNotch:
+    type: application
+    platform: macOS
+    sources: [App]
+    dependencies:
+      - package: NotchKit
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Now Playing
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSApplicationCategoryType: public.app-category.music
+        # An agent: no Dock icon, no app switcher entry.
+        LSUIElement: true
+    entitlements:
+      path: App/NowPlayingNotch.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dantesmith.NowPlayingNotch
+        PRODUCT_NAME: NowPlayingNotch
