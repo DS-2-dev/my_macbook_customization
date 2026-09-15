@@ -1,0 +1,7 @@
+.DS_Store
+build/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+Packages/NotchKit/.build/
+Packages/NotchKit/.swiftpm/
