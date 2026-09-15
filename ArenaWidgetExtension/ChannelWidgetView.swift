@@ -1,0 +1,167 @@
+import ArenaKit
+import SwiftUI
+import WidgetKit
+
+struct ChannelWidgetView: View {
+    @Environment(\.widgetFamily) private var family
+    let entry: ChannelEntry
+
+    private var tiles: [Tile] { entry.snapshot?.tiles ?? [] }
+
+    var body: some View {
+        let grid = GridSpec(family)
+        GeometryReader { geometry in
+            let side = grid.side(fitting: geometry.size)
+            VStack(alignment: .leading, spacing: GridSpec.headerSpacing) {
+                header
+                    .frame(width: grid.width(side: side), height: GridSpec.headerHeight)
+                TileGrid(grid: grid, side: side, tiles: tiles, showTitles: entry.showTitles)
+                    .overlay { message }
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+        }
+        .redacted(reason: entry.status == .placeholder ? .placeholder : [])
+        .widgetURL(family == .systemSmall ? tiles.first?.link : ArenaLink.channel(entry.slug))
+    }
+
+    private var header: some View {
+        Link(destination: ArenaLink.channel(entry.slug)) {
+            HStack(spacing: 6) {
+                Text(entry.snapshot?.title ?? entry.slug)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+                Spacer(minLength: 4)
+                if let count = entry.snapshot?.blockCount {
+                    Text(family == .systemSmall ? "\(count)" : "\(count) blocks")
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                }
+            }
+            .font(.system(size: 11))
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder private var message: some View {
+        switch entry.status {
+        case .notFound: Caption("Channel not found")
+        case .unauthorized: Caption("Private channel. Add a token in the Are.na Widget app.")
+        case .loaded where tiles.isEmpty: Caption("No blocks yet")
+        default: EmptyView()
+        }
+    }
+}
+
+private struct TileGrid: View {
+    let grid: GridSpec
+    let side: CGFloat
+    let tiles: [Tile]
+    let showTitles: Bool
+
+    var body: some View {
+        VStack(spacing: GridSpec.gap) {
+            ForEach(0..<grid.rows, id: \.self) { row in
+                HStack(spacing: GridSpec.gap) {
+                    ForEach(0..<grid.columns, id: \.self) { column in
+                        let index = row * grid.columns + column
+                        TileView(tile: index < tiles.count ? tiles[index] : nil, side: side, showTitle: showTitles)
+                            .frame(width: side, height: side)
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct TileView: View {
+    @Environment(\.colorScheme) private var colorScheme
+    let tile: Tile?
+    let side: CGFloat
+    let showTitle: Bool
+
+    var body: some View {
+        if let tile {
+            Link(destination: tile.link) {
+                content(tile)
+            }
+            .buttonStyle(.plain)
+        } else {
+            Palette.tile(colorScheme)
+        }
+    }
+
+    private func content(_ tile: Tile) -> some View {
+        ZStack(alignment: .bottomLeading) {
+            switch tile.kind {
+            case .image:
+                if let data = tile.imageData, let image = NSImage(data: data) {
+                    Image(nsImage: image)
+                        .resizable()
+                        .interpolation(.high)
+                        .widgetAccentedRenderingMode(.fullColor)
+                        .scaledToFill()
+                        .frame(width: side, height: side)
+                } else {
+                    Palette.tile(colorScheme)
+                }
+            case .text:
+                Palette.tile(colorScheme)
+                    .overlay(alignment: .topLeading) {
+                        Text(tile.text ?? "")
+                            .font(.system(size: min(12, max(8, side / 10))))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                            .padding(side > 90 ? 7 : 5)
+                    }
+            }
+
+            if showTitle, let title = tile.title, title != tile.text {
+                Text(title)
+                    .font(.system(size: 9, weight: .medium))
+                    .lineLimit(1)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Palette.background(colorScheme).opacity(0.9))
+            }
+        }
+        .frame(width: side, height: side)
+        .clipped()
+    }
+}
+
+private struct Caption: View {
+    let text: String
+
+    init(_ text: String) {
+        self.text = text
+    }
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 11))
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.center)
+            .padding(8)
+    }
+}
+
+struct WidgetBackground: View {
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Palette.background(colorScheme)
+    }
+}
+
+/// Neutral, like Are.na itself: the blocks should be the only color in the widget.
+enum Palette {
+    static func background(_ scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color(white: 0.11) : .white
+    }
+
+    static func tile(_ scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color(white: 0.18) : Color(white: 0.95)
+    }
+}

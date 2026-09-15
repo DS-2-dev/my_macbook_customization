@@ -1,0 +1,529 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		10456A45001CFF949398712C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E258A5E4C1482ED570977B /* WidgetKit.framework */; };
+		223676F043FAEA7F4094E835 /* ArenaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 975E55441391F7A7EBA1CB83 /* ArenaKit */; };
+		3C284088DA5585BC80F9DD16 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9DAF7BE227B060CC0377C35 /* SwiftUI.framework */; };
+		3F70E41D0EF84E1102579D10 /* ArenaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3D88BE66647FF0BE7CA128FB /* ArenaKit */; };
+		56A702B5798927A76110E5A2 /* GridSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F99FB602EC536C9730DF25D /* GridSpec.swift */; };
+		787F3EC6EA691AB69392AA3D /* Diagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A21089123C6FFD8544739D /* Diagnostics.swift */; };
+		8DF6FE9DB0FB6D4988A81135 /* ArenaWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81B31837EE9413DB82351B71 /* ArenaWidgetBundle.swift */; };
+		A945FDB7963E084A599645A0 /* ChannelConfigurationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4044A1AE24268085929CB06 /* ChannelConfigurationIntent.swift */; };
+		B7987DCE67B71998C5D250C7 /* ChannelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7996F43ED2D413DB05FACFCA /* ChannelProvider.swift */; };
+		C8B419FF0084928A9C5E9A36 /* ChannelWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584A561119C9C96F0BFA433D /* ChannelWidgetView.swift */; };
+		DF73FAB2C094FC7ABCA6FEA1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61340EB7288F87CA20117DB0 /* ContentView.swift */; };
+		F6F3C0FD6C170629B5837128 /* ArenaWidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB9E89935A40F99BC089C7C /* ArenaWidgetApp.swift */; };
+		FEF2EE9AF255BF5E8263332C /* ArenaWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 880D6363F2B4AEC9A2B3B9D0 /* ArenaWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		52D0368791A7F0BC981B10E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BACB0B3761233E46ACFF54B3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A286EA70C916E6DC70E3FB4;
+			remoteInfo = ArenaWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EC129FE2226F96A2DE4AE122 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				FEF2EE9AF255BF5E8263332C /* ArenaWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		07A21089123C6FFD8544739D /* Diagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagnostics.swift; sourceTree = "<group>"; };
+		3D55E140632E8F56C46920DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		584A561119C9C96F0BFA433D /* ChannelWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWidgetView.swift; sourceTree = "<group>"; };
+		5BB9E89935A40F99BC089C7C /* ArenaWidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArenaWidgetApp.swift; sourceTree = "<group>"; };
+		61340EB7288F87CA20117DB0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6E025D283F79A50FB17F9127 /* ArenaWidget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArenaWidget.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7996F43ED2D413DB05FACFCA /* ChannelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelProvider.swift; sourceTree = "<group>"; };
+		7C8CA210ECC81B7DB557CA7C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7F99FB602EC536C9730DF25D /* GridSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridSpec.swift; sourceTree = "<group>"; };
+		81B31837EE9413DB82351B71 /* ArenaWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArenaWidgetBundle.swift; sourceTree = "<group>"; };
+		880D6363F2B4AEC9A2B3B9D0 /* ArenaWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ArenaWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A9DAF7BE227B060CC0377C35 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		AC6A2CC5649E2AAC6C00EC0F /* ArenaKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ArenaKit; path = Packages/ArenaKit; sourceTree = SOURCE_ROOT; };
+		C5BE46C2698F73ADDEAC81A5 /* ArenaWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ArenaWidget.entitlements; sourceTree = "<group>"; };
+		D048F0F3D32EAA9A4949F786 /* ArenaWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ArenaWidgetExtension.entitlements; sourceTree = "<group>"; };
+		D4044A1AE24268085929CB06 /* ChannelConfigurationIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelConfigurationIntent.swift; sourceTree = "<group>"; };
+		F0E258A5E4C1482ED570977B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D7CCF6E4D8723E273CD1FDB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F70E41D0EF84E1102579D10 /* ArenaKit in Frameworks */,
+				10456A45001CFF949398712C /* WidgetKit.framework in Frameworks */,
+				3C284088DA5585BC80F9DD16 /* SwiftUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F02976B5ECF83F59F55C12E0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				223676F043FAEA7F4094E835 /* ArenaKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		822E9D2A59CCA4E9B0B4DDC2 /* ArenaWidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				81B31837EE9413DB82351B71 /* ArenaWidgetBundle.swift */,
+				D048F0F3D32EAA9A4949F786 /* ArenaWidgetExtension.entitlements */,
+				D4044A1AE24268085929CB06 /* ChannelConfigurationIntent.swift */,
+				7996F43ED2D413DB05FACFCA /* ChannelProvider.swift */,
+				584A561119C9C96F0BFA433D /* ChannelWidgetView.swift */,
+				07A21089123C6FFD8544739D /* Diagnostics.swift */,
+				7F99FB602EC536C9730DF25D /* GridSpec.swift */,
+				7C8CA210ECC81B7DB557CA7C /* Info.plist */,
+			);
+			path = ArenaWidgetExtension;
+			sourceTree = "<group>";
+		};
+		9BB4F9BCA95BAD073A5AD442 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A9DAF7BE227B060CC0377C35 /* SwiftUI.framework */,
+				F0E258A5E4C1482ED570977B /* WidgetKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A5EA2F786723C3CFF04DC28D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6E025D283F79A50FB17F9127 /* ArenaWidget.app */,
+				880D6363F2B4AEC9A2B3B9D0 /* ArenaWidgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B22AFEC7B22850FF44B0DD06 /* ArenaWidget */ = {
+			isa = PBXGroup;
+			children = (
+				C5BE46C2698F73ADDEAC81A5 /* ArenaWidget.entitlements */,
+				5BB9E89935A40F99BC089C7C /* ArenaWidgetApp.swift */,
+				61340EB7288F87CA20117DB0 /* ContentView.swift */,
+				3D55E140632E8F56C46920DD /* Info.plist */,
+			);
+			path = ArenaWidget;
+			sourceTree = "<group>";
+		};
+		DF761557BD9D2B1B95D006C8 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				AC6A2CC5649E2AAC6C00EC0F /* ArenaKit */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		F82843C477BCA09707283EAE = {
+			isa = PBXGroup;
+			children = (
+				B22AFEC7B22850FF44B0DD06 /* ArenaWidget */,
+				822E9D2A59CCA4E9B0B4DDC2 /* ArenaWidgetExtension */,
+				DF761557BD9D2B1B95D006C8 /* Packages */,
+				9BB4F9BCA95BAD073A5AD442 /* Frameworks */,
+				A5EA2F786723C3CFF04DC28D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		18D54E30BD0A6E87F07D646B /* ArenaWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E921B7E80D2F4A6F354B4D6 /* Build configuration list for PBXNativeTarget "ArenaWidget" */;
+			buildPhases = (
+				7011D8E42981F0E3272B77BF /* Sources */,
+				F02976B5ECF83F59F55C12E0 /* Frameworks */,
+				EC129FE2226F96A2DE4AE122 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				60C3890EDEB08DB97DB7828B /* PBXTargetDependency */,
+			);
+			name = ArenaWidget;
+			packageProductDependencies = (
+				975E55441391F7A7EBA1CB83 /* ArenaKit */,
+			);
+			productName = ArenaWidget;
+			productReference = 6E025D283F79A50FB17F9127 /* ArenaWidget.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6A286EA70C916E6DC70E3FB4 /* ArenaWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B23C3D4AFE13363B7258C572 /* Build configuration list for PBXNativeTarget "ArenaWidgetExtension" */;
+			buildPhases = (
+				F084C7E073AF5DEAA2CEE1A9 /* Sources */,
+				D7CCF6E4D8723E273CD1FDB8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ArenaWidgetExtension;
+			packageProductDependencies = (
+				3D88BE66647FF0BE7CA128FB /* ArenaKit */,
+			);
+			productName = ArenaWidgetExtension;
+			productReference = 880D6363F2B4AEC9A2B3B9D0 /* ArenaWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BACB0B3761233E46ACFF54B3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					18D54E30BD0A6E87F07D646B = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+					6A286EA70C916E6DC70E3FB4 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = 453928E01E002414A92B9B92 /* Build configuration list for PBXProject "ArenaWidget" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F82843C477BCA09707283EAE;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				91DFB1D2D34E530397FDDD8C /* XCLocalSwiftPackageReference "Packages/ArenaKit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A5EA2F786723C3CFF04DC28D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				18D54E30BD0A6E87F07D646B /* ArenaWidget */,
+				6A286EA70C916E6DC70E3FB4 /* ArenaWidgetExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7011D8E42981F0E3272B77BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6F3C0FD6C170629B5837128 /* ArenaWidgetApp.swift in Sources */,
+				DF73FAB2C094FC7ABCA6FEA1 /* ContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F084C7E073AF5DEAA2CEE1A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DF6FE9DB0FB6D4988A81135 /* ArenaWidgetBundle.swift in Sources */,
+				A945FDB7963E084A599645A0 /* ChannelConfigurationIntent.swift in Sources */,
+				B7987DCE67B71998C5D250C7 /* ChannelProvider.swift in Sources */,
+				C8B419FF0084928A9C5E9A36 /* ChannelWidgetView.swift in Sources */,
+				787F3EC6EA691AB69392AA3D /* Diagnostics.swift in Sources */,
+				56A702B5798927A76110E5A2 /* GridSpec.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		60C3890EDEB08DB97DB7828B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A286EA70C916E6DC70E3FB4 /* ArenaWidgetExtension */;
+			targetProxy = 52D0368791A7F0BC981B10E8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		01351E245A12150E48A6BA56 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		05F1C77307A3623E62CB6270 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ArenaWidget/ArenaWidget.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ArenaWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dantesmith.ArenaWidget;
+				PRODUCT_NAME = ArenaWidget;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		48543D9A3C337BDE827D2CCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ArenaWidgetExtension/ArenaWidgetExtension.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ArenaWidgetExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dantesmith.ArenaWidget.Extension;
+				PRODUCT_NAME = ArenaWidgetExtension;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		6020A71A42E97FB266034E3D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ArenaWidgetExtension/ArenaWidgetExtension.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ArenaWidgetExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dantesmith.ArenaWidget.Extension;
+				PRODUCT_NAME = ArenaWidgetExtension;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		85C046A31D2F753045AF6391 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ArenaWidget/ArenaWidget.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ArenaWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dantesmith.ArenaWidget;
+				PRODUCT_NAME = ArenaWidget;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		DB6CDE712A67BD1081533E8A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3E921B7E80D2F4A6F354B4D6 /* Build configuration list for PBXNativeTarget "ArenaWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				85C046A31D2F753045AF6391 /* Debug */,
+				05F1C77307A3623E62CB6270 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		453928E01E002414A92B9B92 /* Build configuration list for PBXProject "ArenaWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01351E245A12150E48A6BA56 /* Debug */,
+				DB6CDE712A67BD1081533E8A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B23C3D4AFE13363B7258C572 /* Build configuration list for PBXNativeTarget "ArenaWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48543D9A3C337BDE827D2CCA /* Debug */,
+				6020A71A42E97FB266034E3D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		91DFB1D2D34E530397FDDD8C /* XCLocalSwiftPackageReference "Packages/ArenaKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ArenaKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3D88BE66647FF0BE7CA128FB /* ArenaKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ArenaKit;
+		};
+		975E55441391F7A7EBA1CB83 /* ArenaKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ArenaKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = BACB0B3761233E46ACFF54B3 /* Project object */;
+}

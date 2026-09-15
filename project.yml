@@ -1,0 +1,91 @@
+# Generates ArenaWidget.xcodeproj. Run `xcodegen` after editing this file.
+name: ArenaWidget
+options:
+  bundleIdPrefix: com.dantesmith
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
+    ARCHS: arm64
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    # Free Apple ID: "Sign to Run Locally" (ad-hoc). No team, no provisioning profile.
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: NO
+    DEAD_CODE_STRIPPING: YES
+
+packages:
+  ArenaKit:
+    path: Packages/ArenaKit
+
+targets:
+  ArenaWidget:
+    type: application
+    platform: macOS
+    sources: [ArenaWidget]
+    dependencies:
+      - package: ArenaKit
+      - target: ArenaWidgetExtension
+    info:
+      path: ArenaWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Are.na Widget
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSApplicationCategoryType: public.app-category.productivity
+        CFBundleURLTypes:
+          - CFBundleURLName: com.dantesmith.ArenaWidget
+            CFBundleURLSchemes: [arena-widget]
+    entitlements:
+      path: ArenaWidget/ArenaWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dantesmith.ArenaWidget
+        PRODUCT_NAME: ArenaWidget
+
+  ArenaWidgetExtension:
+    type: app-extension
+    platform: macOS
+    sources: [ArenaWidgetExtension]
+    dependencies:
+      - package: ArenaKit
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    info:
+      path: ArenaWidgetExtension/Info.plist
+      properties:
+        CFBundleDisplayName: Are.na
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: ArenaWidgetExtension/ArenaWidgetExtension.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        # Without this the sandbox silently drops every request.
+        com.apple.security.network.client: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dantesmith.ArenaWidget.Extension
+        PRODUCT_NAME: ArenaWidgetExtension
+        SKIP_INSTALL: YES
+
+schemes:
+  ArenaWidget:
+    build:
+      targets:
+        ArenaWidget: all
+        ArenaWidgetExtension: all
+    run:
+      config: Debug
+    archive:
+      config: Release

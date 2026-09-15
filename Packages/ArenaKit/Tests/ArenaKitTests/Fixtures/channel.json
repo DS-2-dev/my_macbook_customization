@@ -1,0 +1,54 @@
+{
+ "id": 5604247,
+ "type": "Channel",
+ "created_at": "2026-08-21T22:54:06Z",
+ "updated_at": "2026-09-13T23:47:37Z",
+ "slug": "inspo-syd5sijpqmk",
+ "title": "Inspo",
+ "description": {
+  "markdown": "Anything and everything I want in one place",
+  "html": "<p>Anything and everything I want in one place</p>",
+  "plain": "Anything and everything I want in one place"
+ },
+ "state": "available",
+ "visibility": "closed",
+ "metadata": null,
+ "owner": {
+  "id": 1579216,
+  "type": "User",
+  "name": "Dante Smith",
+  "slug": "dante-smith",
+  "avatar": null,
+  "initials": "DS"
+ },
+ "counts": {
+  "blocks": 74,
+  "channels": 0,
+  "contents": 74,
+  "collaborators": 0
+ },
+ "can": {
+  "add_to": false,
+  "update": false,
+  "destroy": false,
+  "manage_collaborators": false
+ },
+ "collaborators": [],
+ "_links": {
+  "self": {
+   "href": "https://api.are.na/v3/channels/inspo-syd5sijpqmk"
+  },
+  "owner": {
+   "href": "https://api.are.na/v3/users/dante-smith"
+  },
+  "contents": {
+   "href": "https://api.are.na/v3/channels/inspo-syd5sijpqmk/contents"
+  },
+  "connections": {
+   "href": "https://api.are.na/v3/channels/inspo-syd5sijpqmk/connections"
+  },
+  "followers": {
+   "href": "https://api.are.na/v3/channels/inspo-syd5sijpqmk/followers"
+  }
+ }
+}
