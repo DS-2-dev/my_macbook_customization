@@ -99,6 +99,21 @@ enum NotchStyle {
     /// Between the bars and "Listening now".
     static let barSpacing: CGFloat = 5
 
+    // MARK: Marquee
+
+    /// A title or artist too long for its line scrolls instead of being cut
+    /// off: set twice with a gap and drifting left at one steady pace.
+    /// Points per second; the site's card uses 28px.
+    static let marqueeSpeed: Double = 30
+    /// Between the end of the text and its second copy.
+    static let marqueeGap: CGFloat = 40
+    /// How long it holds still when it first appears, so it can be read from
+    /// its first letter. It never holds again after that.
+    static let marqueeHold: TimeInterval = 1.2
+    /// The soft edges: the start only once it's moving, the end always.
+    static let marqueeLeadingFade: CGFloat = 10
+    static let marqueeTrailingFade: CGFloat = 18
+
     // MARK: No art
 
     /// Shown in the wing when a track has no art; the open panel is then

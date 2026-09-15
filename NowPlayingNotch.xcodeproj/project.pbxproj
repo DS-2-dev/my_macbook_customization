@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02365D208880CC2F7B4042EC /* MarqueeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7A6580F40D23D81ACD63FA /* MarqueeText.swift */; };
 		040C033F155E487948949F4F /* NotchPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5571943AF07197335C95FFA /* NotchPanel.swift */; };
 		26337A97D24BF2AE41EA0429 /* NotchKit in Frameworks */ = {isa = PBXBuildFile; productRef = ECE30AD2DD863FA3E3A6BB83 /* NotchKit */; };
 		2E822CA59B3DEE5A46813AC5 /* NowPlayingNotchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17708781D46A728FD2AA9288 /* NowPlayingNotchApp.swift */; };
@@ -36,6 +37,7 @@
 		A5DF2E74781AE1F452026D6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A9D7921203C27509FCF5595F /* NotchStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchStyle.swift; sourceTree = "<group>"; };
 		C73477AC5B343E58FFF4E5AF /* ArtworkLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkLoader.swift; sourceTree = "<group>"; };
+		EE7A6580F40D23D81ACD63FA /* MarqueeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarqueeText.swift; sourceTree = "<group>"; };
 		EFFA3FFA964A1EA6F5E0C447 /* NotchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -74,6 +76,7 @@
 				3862F3A1A6613F498C154575 /* AppSettings.swift */,
 				C73477AC5B343E58FFF4E5AF /* ArtworkLoader.swift */,
 				A5DF2E74781AE1F452026D6F /* Info.plist */,
+				EE7A6580F40D23D81ACD63FA /* MarqueeText.swift */,
 				71ADE324CE93E44A45188947 /* NotchController.swift */,
 				A5571943AF07197335C95FFA /* NotchPanel.swift */,
 				A9D7921203C27509FCF5595F /* NotchStyle.swift */,
@@ -162,6 +165,7 @@
 			files = (
 				CD2AF12FD210D130B0418CAD /* AppSettings.swift in Sources */,
 				66649777276B8AC756F7D5FC /* ArtworkLoader.swift in Sources */,
+				02365D208880CC2F7B4042EC /* MarqueeText.swift in Sources */,
 				6C84F6A070AF16EEA37D95EE /* NotchController.swift in Sources */,
 				040C033F155E487948949F4F /* NotchPanel.swift in Sources */,
 				6FFE611650CA21DAF339D9D1 /* NotchStyle.swift in Sources */,

@@ -98,11 +98,12 @@ struct NotchView: View {
                 }
             }
             .foregroundStyle(NotchStyle.tertiaryText)
-            Text(track.track ?? "")
+            // Scroll when they're too long for the line; still when they fit.
+            MarqueeText(track.track ?? "")
                 .font(NotchStyle.titleFont)
                 .foregroundStyle(NotchStyle.primaryText)
             if let artist = track.artist {
-                Text(artist)
+                MarqueeText(artist)
                     .font(NotchStyle.artistFont)
                     .foregroundStyle(NotchStyle.secondaryText)
             }
