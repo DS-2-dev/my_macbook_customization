@@ -78,10 +78,11 @@ Check that the extension is registered:
 pluginkit -m -v -p com.apple.widgetkit-extension | grep -i arena
 ```
 
-Watch the extension's own log (fetches, tile counts, image bytes, peak memory):
+Watch the extension's own log (fetches, tile counts, image bytes, peak memory).
+Use the full path: zsh has a builtin called `log` that shadows the system tool.
 
 ```sh
-log stream --info --predicate 'subsystem == "com.dantesmith.ArenaWidget"'
+/usr/bin/log stream --predicate 'subsystem == "com.dantesmith.ArenaWidget"'
 ```
 
 ## Development
