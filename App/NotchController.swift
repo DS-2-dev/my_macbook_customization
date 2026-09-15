@@ -78,4 +78,7 @@ final class NotchLayout {
     var kind: NotchMetrics.Kind = .notch
     /// The collapsed shape inside the panel, top-left origin.
     var shape: CGRect = .zero
+    /// False when nothing has played recently: then nothing is drawn and the
+    /// notch is left as it is. Always true until real data arrives in step 4.
+    var hasSomethingToShow = true
 }

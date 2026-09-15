@@ -66,6 +66,17 @@ import Testing
         #expect(NotchGeometry.rect(metrics.rect, inPanel: panel) == CGRect(x: 147.5, y: 0, width: 185, height: 32))
     }
 
+    @Test func restingBodyReachesPastOneSideFromTheMiddle() {
+        let notch = CGRect(x: 147.5, y: 0, width: 185, height: 32)
+        let trailing = NotchGeometry.restingBody(notch: notch, wing: 26, side: .trailing)
+        #expect(trailing == CGRect(x: 240, y: 0, width: 118.5, height: 32))
+        #expect(trailing.maxX == notch.maxX + 26)
+
+        let leading = NotchGeometry.restingBody(notch: notch, wing: 26, side: .leading)
+        #expect(leading.minX == notch.minX - 26)
+        #expect(leading.maxX == notch.midX)
+    }
+
     @Test func panelStaysOnScreen() {
         let metrics = NotchMetrics(
             kind: .pill,

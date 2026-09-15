@@ -67,6 +67,24 @@ public enum NotchGeometry {
         return CGRect(x: x, y: metrics.rect.maxY - canvas.height, width: canvas.width, height: canvas.height)
     }
 
+    /// The black body of the resting state: from the middle of the notch,
+    /// where the hardware hides it, out past one side by `wing`. Nothing is
+    /// drawn on the other side, so that half of the notch is untouched.
+    public static func restingBody(notch: CGRect, wing: CGFloat, side: Side) -> CGRect {
+        let width = notch.width / 2 + wing
+        switch side {
+        case .trailing:
+            return CGRect(x: notch.midX, y: notch.minY, width: width, height: notch.height)
+        case .leading:
+            return CGRect(x: notch.minX - wing, y: notch.minY, width: width, height: notch.height)
+        }
+    }
+
+    public enum Side: Sendable {
+        case leading
+        case trailing
+    }
+
     /// `rect`, given in screen coordinates, as seen from inside `panel` with
     /// SwiftUI's top-left origin.
     public static func rect(_ rect: CGRect, inPanel panel: CGRect) -> CGRect {
