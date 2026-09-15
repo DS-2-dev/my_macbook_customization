@@ -6,7 +6,7 @@ struct ChannelWidgetView: View {
     @Environment(\.widgetFamily) private var family
     let entry: ChannelEntry
 
-    private var tiles: [Tile] { entry.snapshot?.tiles ?? [] }
+    private var tiles: [Tile] { entry.tiles }
 
     var body: some View {
         let grid = GridSpec(family)
@@ -74,7 +74,8 @@ private struct TileView: View {
         return ZStack(alignment: .bottomLeading) {
             switch tile.kind {
             case .image:
-                if let data = tile.imageData, let image = NSImage(data: data) {
+                // Views render inside the extension, which can read its own thumbnail cache.
+                if let file = tile.imageFile, let data = try? Data(contentsOf: file), let image = NSImage(data: data) {
                     Image(nsImage: image)
                         .resizable()
                         .interpolation(.high)

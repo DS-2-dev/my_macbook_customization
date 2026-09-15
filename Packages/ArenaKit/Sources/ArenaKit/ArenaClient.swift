@@ -23,6 +23,11 @@ public struct ArenaClient: Sendable {
         try await get("channels/\(slug)")
     }
 
+    /// The account a token belongs to. Fails with `.unauthorized` for a bad token.
+    public func me() async throws -> ArenaUser {
+        try await get("me")
+    }
+
     /// Newest-first by the owner's manual order, which is how the channel reads on are.na.
     public func contents(_ slug: String, per: Int, page: Int = 1) async throws -> ArenaContentsPage {
         try await get("channels/\(slug)/contents", query: [

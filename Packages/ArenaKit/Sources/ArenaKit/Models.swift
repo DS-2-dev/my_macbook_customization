@@ -11,13 +11,18 @@ public struct ArenaChannel: Decodable, Sendable {
     public var slug: String?
     public var counts: Counts?
     public var owner: ArenaUser?
+    /// Changes whenever blocks are added, removed, or reordered.
+    public var updatedAt: String?
 
     public struct Counts: Decodable, Sendable {
         public var contents: Int?
         public var blocks: Int?
     }
 
-    enum CodingKeys: String, CodingKey { case id, title, slug, counts, owner }
+    enum CodingKeys: String, CodingKey {
+        case id, title, slug, counts, owner
+        case updatedAt = "updated_at"
+    }
 
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -26,6 +31,7 @@ public struct ArenaChannel: Decodable, Sendable {
         slug = c.lenient(String.self, .slug)
         counts = c.lenient(Counts.self, .counts)
         owner = c.lenient(ArenaUser.self, .owner)
+        updatedAt = c.lenient(String.self, .updatedAt)
     }
 }
 
@@ -38,15 +44,22 @@ public struct ArenaUser: Decodable, Sendable {
 public struct ArenaContentsPage: Decodable, Sendable {
     public var blocks: [ArenaBlock]
     public var totalCount: Int?
+    public var hasMorePages: Bool?
 
     enum CodingKeys: String, CodingKey { case data, meta }
-    struct Meta: Decodable { var total_count: Int? }
+
+    struct Meta: Decodable {
+        var total_count: Int?
+        var has_more_pages: Bool?
+    }
 
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         let raw = try c.decodeIfPresent([Lossy<ArenaBlock>].self, forKey: .data) ?? []
         blocks = raw.compactMap(\.value)
-        totalCount = c.lenient(Meta.self, .meta)?.total_count
+        let meta = c.lenient(Meta.self, .meta)
+        totalCount = meta?.total_count
+        hasMorePages = meta?.has_more_pages
     }
 }
 
@@ -96,13 +109,14 @@ public struct RichText: Decodable, Sendable {
     }
 }
 
-public struct ArenaImage: Decodable, Sendable {
+/// Codable (not just Decodable) because the widget keeps it in its on-disk catalog.
+public struct ArenaImage: Codable, Sendable {
     public var small: Variant?
     public var square: Variant?
     public var medium: Variant?
     public var large: Variant?
 
-    public struct Variant: Decodable, Sendable {
+    public struct Variant: Codable, Sendable {
         public var src: String?
         /// Same rendition at twice the pixel dimensions (never upscaled past the original).
         public var src2x: String?
@@ -151,6 +165,10 @@ public struct ArenaImage: Decodable, Sendable {
         }
         return (covering?.src ?? small?.src2x ?? small?.src ?? square?.src ?? medium?.src)
             .flatMap(URL.init(string:))
+    }
+
+    var hasThumbnail: Bool {
+        thumbnailURL(covering: CGSize(width: 1, height: 1)) != nil
     }
 }
 

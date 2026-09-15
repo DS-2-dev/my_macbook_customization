@@ -46,6 +46,8 @@ targets:
       path: ArenaWidget/ArenaWidget.entitlements
       properties:
         com.apple.security.app-sandbox: true
+        # Checks a pasted token against /v3/me before saving it.
+        com.apple.security.network.client: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dantesmith.ArenaWidget

@@ -12,19 +12,28 @@ struct ChannelEntry: TimelineEntry {
 
     var date: Date
     var slug: String
-    var snapshot: ChannelSnapshot?
+    var tiles: [Tile]
     var showTitles: Bool
     var status: Status
 
     static func placeholder(slug: String = ChannelSlug.fallback) -> ChannelEntry {
-        ChannelEntry(date: .now, slug: slug, snapshot: nil, showTitles: false, status: .placeholder)
+        ChannelEntry(date: .now, slug: slug, tiles: [], showTitles: false, status: .placeholder)
     }
 }
 
+/// Rotates through every block in the channel. Each timeline deals the next
+/// 20 screens from a persistent shuffled deck, one every three minutes, then
+/// asks for a new timeline. Scheduled entries don't wake the extension, so the
+/// rotation costs about one refresh an hour.
 struct ChannelProvider: AppIntentTimelineProvider {
-    private static let refreshInterval: TimeInterval = 30 * 60
-    private static let retryInterval: TimeInterval = 15 * 60
-    private let cache = SnapshotCache.standard
+    private static let rotationInterval: TimeInterval = 3 * 60
+    private static let screensPerTimeline = 20
+    /// When the network is down, rotate what's on disk for this many screens, then retry.
+    private static let screensBeforeRetry = 5
+    private static let thumbnailLimit = 1000
+
+    private let store = DiskStore.standard
+    private let thumbnails = ImageCache.standard
     private let log = Logger(subsystem: "com.dantesmith.ArenaWidget", category: "provider")
 
     func placeholder(in context: Context) -> ChannelEntry {
@@ -33,43 +42,89 @@ struct ChannelProvider: AppIntentTimelineProvider {
 
     func snapshot(for configuration: ChannelConfigurationIntent, in context: Context) async -> ChannelEntry {
         let request = FetchRequest(configuration, context)
-        if let cached = cache.load(key: request.cacheKey) {
-            return request.entry(cached)
-        }
-        // Nothing cached yet, typically the first time the gallery asks. Give the
-        // network a short window, then fall back so the gallery never stalls.
-        if let fresh = await withDeadline(seconds: 4, { try await fetch(request) }) {
-            return request.entry(fresh)
-        }
-        return .placeholder(slug: request.slug)
+        // The gallery calls this, so answer within a few seconds no matter what.
+        let entry = await withDeadline(seconds: 4) { try await preview(request) }
+        return entry ?? .placeholder(slug: request.slug)
     }
 
     func timeline(for configuration: ChannelConfigurationIntent, in context: Context) async -> Timeline<ChannelEntry> {
         let request = FetchRequest(configuration, context)
+        let auth = TokenStore.load()
+        let cached = store.load(ChannelCatalog.self, key: request.catalogKey)
+
+        let catalog: ChannelCatalog
+        let online: Bool
         do {
-            let snapshot = try await fetch(request)
-            return Timeline(entries: [request.entry(snapshot)], policy: .after(.now.addingTimeInterval(Self.refreshInterval)))
+            let loader = CatalogLoader(client: ArenaClient(token: auth.token))
+            catalog = try await loader.load(slug: request.slug, cached: cached)
+            store.save(catalog, key: request.catalogKey)
+            online = true
         } catch {
             log.error("fetch \(request.slug, privacy: .public) failed: \(String(describing: error), privacy: .public)")
-            // Stale beats broken: show the last blocks we saw for this channel.
-            let entry = cache.load(key: request.cacheKey).map(request.entry)
-                ?? request.entry(status: Self.status(for: error))
-            return Timeline(entries: [entry], policy: .after(.now.addingTimeInterval(Self.retryInterval)))
+            guard let cached else {
+                let retry = Date.now.addingTimeInterval(Self.rotationInterval * Double(Self.screensBeforeRetry))
+                return Timeline(entries: [request.entry(status: Self.status(for: error))], policy: .after(retry))
+            }
+            // Stale beats broken: keep rotating through what's already on disk.
+            catalog = cached
+            online = false
         }
-    }
 
-    private func fetch(_ request: FetchRequest) async throws -> ChannelSnapshot {
-        let builder = SnapshotBuilder(client: ArenaClient())
-        let snapshot = try await builder.build(slug: request.slug, limit: request.grid.count, pixelSize: request.pixelSize)
-        cache.save(snapshot, key: request.cacheKey)
-        let bytes = snapshot.tiles.reduce(0) { $0 + ($1.imageData?.count ?? 0) }
+        var generator = SystemRandomNumberGenerator()
+        var deck = store.load(Deck.self, key: request.deckKey) ?? Deck()
+        let drawable = online ? catalog.blocks : catalog.blocks.filter {
+            !$0.hasImage || thumbnails.contains(blockID: $0.id, pixelSize: request.pixelSize)
+        }
+        deck.sync(with: drawable.map(\.id), using: &generator)
+        let screens = deck.deal(
+            screens: online ? Self.screensPerTimeline : Self.screensBeforeRetry,
+            perScreen: request.grid.count,
+            using: &generator
+        )
+        // Offline the deck was synced to a subset; don't let that drop blocks for good.
+        if online {
+            store.save(deck, key: request.deckKey)
+        }
+
+        let tiles = await tiles(for: screens, in: catalog, request: request, allowDownloads: online)
+        thumbnails.prune(keeping: Self.thumbnailLimit)
         log.notice("""
-            fetched \(request.slug, privacy: .public) \(request.grid.columns)x\(request.grid.rows) \
-            tiles=\(snapshot.tiles.count) px=\(Int(request.pixelSize.width))x\(Int(request.pixelSize.height)) \
-            bytes=\(bytes) \
+            timeline \(request.slug, privacy: .public) \(request.grid.columns)x\(request.grid.rows) \
+            blocks=\(catalog.blocks.count) screens=\(screens.count) tiles=\(tiles.count) \
+            px=\(Int(request.pixelSize.width))x\(Int(request.pixelSize.height)) online=\(online) \
+            auth=\(auth.logDescription, privacy: .public) \
             peakMB=\(Diagnostics.peakFootprintMB(), format: .fixed(precision: 1))
             """)
-        return snapshot
+
+        let entries = request.entries(screens.map { $0.compactMap { tiles[$0] } }, interval: Self.rotationInterval)
+        return Timeline(entries: entries, policy: .atEnd)
+    }
+
+    /// One random screen, preferring what's on disk; used for the gallery preview.
+    private func preview(_ request: FetchRequest) async throws -> ChannelEntry {
+        let catalog: ChannelCatalog
+        if let cached = store.load(ChannelCatalog.self, key: request.catalogKey) {
+            catalog = cached
+        } else {
+            let loader = CatalogLoader(client: ArenaClient(token: TokenStore.load().token))
+            catalog = try await loader.load(slug: request.slug, cached: nil)
+            store.save(catalog, key: request.catalogKey)
+        }
+        let picks = Array(catalog.blocks.shuffled().prefix(request.grid.count))
+        let tiles = await TileMaker(cache: thumbnails).tiles(for: picks, pixelSize: request.pixelSize, allowDownloads: true)
+        return request.entries([picks.compactMap { tiles[$0.id] }], interval: 0)[0]
+    }
+
+    private func tiles(
+        for screens: [[Int]],
+        in catalog: ChannelCatalog,
+        request: FetchRequest,
+        allowDownloads: Bool
+    ) async -> [Int: Tile] {
+        let blocks = Dictionary(catalog.blocks.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        var seen = Set<Int>()
+        let needed = screens.joined().filter { seen.insert($0).inserted }.compactMap { blocks[$0] }
+        return await TileMaker(cache: thumbnails).tiles(for: needed, pixelSize: request.pixelSize, allowDownloads: allowDownloads)
     }
 
     private static func status(for error: any Error) -> ChannelEntry.Status {
@@ -94,14 +149,38 @@ private struct FetchRequest {
         pixelSize = grid.pixelSize(for: context.displaySize)
     }
 
-    var cacheKey: String { "\(slug)-\(grid.columns)x\(grid.rows)" }
+    var catalogKey: String { "catalog-\(slug)" }
+    var deckKey: String { "deck-\(slug)-\(grid.columns)x\(grid.rows)" }
 
-    func entry(_ snapshot: ChannelSnapshot) -> ChannelEntry {
-        ChannelEntry(date: .now, slug: slug, snapshot: snapshot, showTitles: showTitles, status: .loaded)
+    /// One entry per screen, `interval` apart, starting now.
+    func entries(_ screens: [[Tile]], interval: TimeInterval) -> [ChannelEntry] {
+        guard !screens.isEmpty else {
+            return [ChannelEntry(date: .now, slug: slug, tiles: [], showTitles: showTitles, status: .loaded)]
+        }
+        let start = Date.now
+        return screens.enumerated().map { index, tiles in
+            ChannelEntry(
+                date: start.addingTimeInterval(interval * Double(index)),
+                slug: slug,
+                tiles: tiles,
+                showTitles: showTitles,
+                status: .loaded
+            )
+        }
     }
 
     func entry(status: ChannelEntry.Status) -> ChannelEntry {
-        ChannelEntry(date: .now, slug: slug, snapshot: nil, showTitles: showTitles, status: status)
+        ChannelEntry(date: .now, slug: slug, tiles: [], showTitles: showTitles, status: status)
+    }
+}
+
+private extension TokenStore.State {
+    var logDescription: String {
+        switch self {
+        case .missing: "none"
+        case .saved: "token"
+        case .inaccessible: "inaccessible"
+        }
     }
 }
 
