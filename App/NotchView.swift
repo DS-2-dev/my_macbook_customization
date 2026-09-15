@@ -88,11 +88,16 @@ struct NotchView: View {
         VStack(alignment: .leading, spacing: NotchStyle.lineSpacing) {
             // Redrawn every half minute, so "20 minutes ago" keeps counting
             // between polls.
-            TimelineView(.periodic(from: .now, by: 30)) { context in
-                Text(track.status(at: context.date))
-                    .font(NotchStyle.statusFont)
-                    .foregroundStyle(NotchStyle.tertiaryText)
+            HStack(alignment: .center, spacing: NotchStyle.barSpacing) {
+                if track.playing {
+                    PlayingBars()
+                }
+                TimelineView(.periodic(from: .now, by: 30)) { context in
+                    Text(track.status(at: context.date))
+                        .font(NotchStyle.statusFont)
+                }
             }
+            .foregroundStyle(NotchStyle.tertiaryText)
             Text(track.track ?? "")
                 .font(NotchStyle.titleFont)
                 .foregroundStyle(NotchStyle.primaryText)

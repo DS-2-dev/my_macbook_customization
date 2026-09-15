@@ -84,6 +84,21 @@ enum NotchStyle {
     /// nothing has for a while, and a new track arriving.
     static let appearSpring = Animation.spring(response: 0.45, dampingFraction: 0.86)
 
+    // MARK: Playing bars
+
+    /// The three bars before "Listening now", as on dantesmith.studio: 2pt
+    /// wide and 2pt apart, each growing from 30% to full height and back,
+    /// 0.9s each way, a third of a cycle apart. Only while playing.
+    static let barWidth: CGFloat = 2
+    static let barGap: CGFloat = 2
+    /// The site's 0.6rem beside 12px type, scaled to the 11pt status line.
+    static let barHeight: CGFloat = 9
+    static let barMinScale: CGFloat = 0.3
+    static let barPeriod: TimeInterval = 0.9
+    static let barDelays: [TimeInterval] = [0, -0.3, -0.6]
+    /// Between the bars and "Listening now".
+    static let barSpacing: CGFloat = 5
+
     // MARK: No art
 
     /// Shown in the wing when a track has no art; the open panel is then
