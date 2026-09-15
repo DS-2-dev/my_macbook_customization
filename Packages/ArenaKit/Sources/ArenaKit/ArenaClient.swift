@@ -2,30 +2,20 @@ import Foundation
 
 public enum ArenaError: Error, Equatable, Sendable {
     case notFound
+    /// The channel is private; this widget only reads public channels.
     case unauthorized
     case http(Int)
     case badResponse
 }
 
-/// Minimal client for the Are.na v3 API. Public channels need no token.
+/// Minimal client for the public Are.na v3 API. Public channels need no token.
 public struct ArenaClient: Sendable {
     public static let baseURL = URL(string: "https://api.are.na/v3")!
 
-    public var token: String?
     public var session: URLSession
 
-    public init(token: String? = nil, session: URLSession = .arena) {
-        self.token = token
+    public init(session: URLSession = .arena) {
         self.session = session
-    }
-
-    public func channel(_ slug: String) async throws -> ArenaChannel {
-        try await get("channels/\(slug)")
-    }
-
-    /// The account a token belongs to. Fails with `.unauthorized` for a bad token.
-    public func me() async throws -> ArenaUser {
-        try await get("me")
     }
 
     /// Newest-first by the owner's manual order, which is how the channel reads on are.na.
@@ -42,9 +32,6 @@ public struct ArenaClient: Sendable {
         components.queryItems = query.isEmpty ? nil : query
         var request = URLRequest(url: components.url!, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 15)
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        if let token, !token.isEmpty {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
 
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw ArenaError.badResponse }
@@ -59,8 +46,7 @@ public struct ArenaClient: Sendable {
 }
 
 extension URLSession {
-    /// No URL cache: widget extensions have a small memory ceiling and we keep
-    /// our own on-disk snapshot anyway.
+    /// No URL cache: the widget keeps nothing on disk, and the extension has a small memory ceiling.
     public static let arena: URLSession = {
         let config = URLSessionConfiguration.ephemeral
         config.urlCache = nil

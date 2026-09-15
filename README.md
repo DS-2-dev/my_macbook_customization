@@ -66,32 +66,17 @@ widget; to change the counts, edit `GridSpec.init(_:)`.
 
 Every 3 minutes the widget shows a new random selection, working through a
 shuffled order of the whole channel so every block comes up before any repeat.
-It checks Are.na for changes about once an hour, and new blocks join the
-rotation then. Very large channels are capped at their newest 3,000 blocks. If
-the network is down it keeps rotating through the blocks it already has.
+Once an hour it lists the channel and downloads only the images for that hour.
+They're kept in memory and dropped when the hour is up; nothing is saved to
+disk. New blocks join the rotation at the next hourly refresh. Very large
+channels are capped at their newest 1,000 blocks. If Are.na can't be reached,
+the widget shows empty tiles and tries again every 5 minutes.
+
+Only public channels are supported.
 
 If images look grey on the desktop, that's macOS dimming desktop widgets
 while other windows are in front. Change it under System Settings → Desktop &
 Dock → Widget style.
-
-## Private channels
-
-Public channels need no token. For a private channel:
-
-1. Create a personal access token at
-   [are.na/settings/personal-access-tokens](https://www.are.na/settings/personal-access-tokens).
-   Read access is enough.
-2. Open the Are.na Widget app, paste the token into **Personal access token**,
-   and click **Save**. The app checks it with Are.na, then stores it in your
-   login keychain as "Are.na Widget token".
-
-The widget extension reads the token from the keychain too. Without App Groups
-(which a free Apple ID can't use), that works by listing both the app and the
-extension as trusted on the keychain item. The trust is tied to each binary's
-code signature, and a locally signed build gets a new one every time you
-rebuild. **After installing a new build, paste the token again.** The app
-tells you when its saved token isn't readable. You may see one keychain
-password prompt when it replaces the old item.
 
 ## Troubleshooting
 

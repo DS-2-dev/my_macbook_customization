@@ -5,41 +5,6 @@ import Foundation
 // one oddly-shaped field keeps the rest of its data, and a block that can't be
 // decoded at all is dropped instead of failing the whole page.
 
-public struct ArenaChannel: Decodable, Sendable {
-    public var id: Int?
-    public var title: String?
-    public var slug: String?
-    public var counts: Counts?
-    public var owner: ArenaUser?
-    /// Changes whenever blocks are added, removed, or reordered.
-    public var updatedAt: String?
-
-    public struct Counts: Decodable, Sendable {
-        public var contents: Int?
-        public var blocks: Int?
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case id, title, slug, counts, owner
-        case updatedAt = "updated_at"
-    }
-
-    public init(from decoder: any Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        id = c.lenient(Int.self, .id)
-        title = c.lenient(String.self, .title)
-        slug = c.lenient(String.self, .slug)
-        counts = c.lenient(Counts.self, .counts)
-        owner = c.lenient(ArenaUser.self, .owner)
-        updatedAt = c.lenient(String.self, .updatedAt)
-    }
-}
-
-public struct ArenaUser: Decodable, Sendable {
-    public var slug: String?
-    public var name: String?
-}
-
 /// One page of `GET /v3/channels/{slug}/contents`.
 public struct ArenaContentsPage: Decodable, Sendable {
     public var blocks: [ArenaBlock]
@@ -109,14 +74,13 @@ public struct RichText: Decodable, Sendable {
     }
 }
 
-/// Codable (not just Decodable) because the widget keeps it in its on-disk catalog.
-public struct ArenaImage: Codable, Sendable {
+public struct ArenaImage: Decodable, Sendable {
     public var small: Variant?
     public var square: Variant?
     public var medium: Variant?
     public var large: Variant?
 
-    public struct Variant: Codable, Sendable {
+    public struct Variant: Decodable, Sendable {
         public var src: String?
         /// Same rendition at twice the pixel dimensions (never upscaled past the original).
         public var src2x: String?

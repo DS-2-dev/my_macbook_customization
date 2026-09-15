@@ -5,30 +5,9 @@ import Testing
 import UniformTypeIdentifiers
 @testable import ArenaKit
 
-private func fixture(_ name: String) throws -> Data {
-    let url = try #require(Bundle.module.url(forResource: name, withExtension: "json", subdirectory: "Fixtures"))
-    return try Data(contentsOf: url)
-}
-
 private func contentsFixture() throws -> ArenaContentsPage {
-    try JSONDecoder().decode(ArenaContentsPage.self, from: fixture("contents"))
-}
-
-private func temporaryDirectory() -> URL {
-    FileManager.default.temporaryDirectory.appending(path: UUID().uuidString, directoryHint: .isDirectory)
-}
-
-/// SplitMix64, so shuffles in tests are reproducible.
-private struct SeededGenerator: RandomNumberGenerator {
-    var state: UInt64
-
-    mutating func next() -> UInt64 {
-        state &+= 0x9E37_79B9_7F4A_7C15
-        var z = state
-        z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
-        z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
-        return z ^ (z >> 31)
-    }
+    let url = try #require(Bundle.module.url(forResource: "contents", withExtension: "json", subdirectory: "Fixtures"))
+    return try JSONDecoder().decode(ArenaContentsPage.self, from: Data(contentsOf: url))
 }
 
 @Suite struct Decoding {
@@ -63,112 +42,66 @@ private struct SeededGenerator: RandomNumberGenerator {
         #expect(link.source?.url != nil)
         #expect(link.image?.thumbnailURL(covering: CGSize(width: 100, height: 100)) != nil)
     }
-
-    @Test func channel() throws {
-        let channel = try JSONDecoder().decode(ArenaChannel.self, from: fixture("channel"))
-        #expect(channel.title == "Inspo")
-        #expect(channel.slug == "inspo-syd5sijpqmk")
-        #expect(channel.counts?.contents == 74)
-        #expect(channel.updatedAt != nil)
-    }
 }
 
 @Suite struct Catalogs {
     @Test func blocksKeepWhatTilesNeed() throws {
         let blocks = try contentsFixture().blocks.map(CatalogBlock.init)
         let image = try #require(blocks.first)
-        #expect(image.hasImage)
+        #expect(image.image != nil)
         #expect(image.link == ArenaLink.block(image.id))
 
         let text = try #require(blocks.first { $0.type == "Text" })
-        #expect(!text.hasImage)
+        #expect(text.image == nil)
         #expect(text.text?.contains("Foucault’s Pendulum") == true)
         #expect(text.text?.contains("*") == false)
 
         let weird = try #require(blocks.first { $0.id == 5 })
-        #expect(!weird.hasImage)
-    }
-
-    @Test func survivesDiskRoundTrip() throws {
-        let directory = temporaryDirectory()
-        defer { try? FileManager.default.removeItem(at: directory) }
-        let store = DiskStore(directory: directory)
-        let catalog = ChannelCatalog(
-            slug: "inspo", title: "Inspo", updatedAt: "2026-09-15T00:00:00Z", totalCount: 74,
-            blocks: try contentsFixture().blocks.map(CatalogBlock.init), fetchedAt: .now
-        )
-        #expect(store.load(ChannelCatalog.self, key: "catalog-inspo") == nil)
-        store.save(catalog, key: "catalog-inspo")
-
-        let loaded = try #require(store.load(ChannelCatalog.self, key: "catalog-inspo"))
-        #expect(loaded.blocks.map(\.id) == catalog.blocks.map(\.id))
-        let size = CGSize(width: 470, height: 346)
-        #expect(loaded.blocks.map { $0.image?.thumbnailURL(covering: size) } == catalog.blocks.map { $0.image?.thumbnailURL(covering: size) })
+        #expect(weird.image == nil)
     }
 }
 
-@Suite struct Decks {
-    @Test(arguments: [1, 2, 3] as [UInt64])
-    func dealsEveryBlockBeforeRepeating(seed: UInt64) {
-        var generator = SeededGenerator(state: seed)
-        var deck = Deck()
-        let ids = Array(1...74)
-        deck.sync(with: ids, using: &generator)
+@Suite struct Rotations {
+    private let ids = Array(1...74)
 
-        let screens = deck.deal(screens: 13, perScreen: 6, using: &generator)
-        #expect(screens.count == 13)
-        #expect(screens.allSatisfy { $0.count == 6 && Set($0).count == 6 })
-        #expect(Set(screens.prefix(12).joined()).count == 72)
-        #expect(Set(screens.joined()) == Set(ids))
+    @Test func screensAreFullAndDistinct() {
+        for index in 9_000_000..<9_000_200 {
+            let screen = Rotation.screen(index, of: ids, perScreen: 6, seed: 42)
+            #expect(screen.count == 6)
+            #expect(Set(screen).count == 6)
+        }
     }
 
-    @Test func continuesWhereItLeftOffAfterSaving() throws {
-        var generator = SeededGenerator(state: 9)
-        var deck = Deck()
-        deck.sync(with: Array(1...20), using: &generator)
-        let first = deck.deal(screens: 2, perScreen: 5, using: &generator)
-
-        let data = try PropertyListEncoder().encode(deck)
-        var restored = try PropertyListDecoder().decode(Deck.self, from: data)
-        restored.sync(with: Array(1...20), using: &generator)
-        let second = restored.deal(screens: 2, perScreen: 5, using: &generator)
-
-        #expect(Set((first + second).joined()) == Set(1...20))
+    @Test func everyBlockShowsOnceBeforeRepeating() {
+        // 74 blocks, 6 per screen: the first 12 screens are positions 0..<72, all in the first pass.
+        let screens = (0..<12).map { Rotation.screen($0, of: ids, perScreen: 6, seed: 42) }
+        #expect(Set(screens.joined()).count == 72)
+        let small = (0..<74).map { Rotation.screen($0, of: ids, perScreen: 1, seed: 42) }
+        #expect(Set(small.joined()) == Set(ids))
     }
 
-    @Test func syncDropsRemovedBlocksAndQueuesNewOnes() {
-        var generator = SeededGenerator(state: 4)
-        var deck = Deck()
-        deck.sync(with: Array(1...10), using: &generator)
-        let shown = Set(deck.deal(screens: 1, perScreen: 5, using: &generator)[0])
+    @Test func sameScreenEveryTime() {
+        #expect(Rotation.screen(123, of: ids, perScreen: 6, seed: 7) == Rotation.screen(123, of: ids, perScreen: 6, seed: 7))
+        #expect(Rotation.screen(0, of: ids, perScreen: 6, seed: 1) != Rotation.screen(0, of: ids, perScreen: 6, seed: 2))
+    }
 
-        deck.sync(with: Array(3...12), using: &generator)
-        let upcoming = Set(3...12).subtracting(shown)
-        let next = deck.deal(screens: 1, perScreen: upcoming.count, using: &generator)[0]
-        #expect(Set(next) == upcoming)
-        #expect(!deck.order.contains(1) && !deck.order.contains(2))
+    @Test func seedIsStableAcrossLaunches() {
+        // Published FNV-1a 64-bit value for "a".
+        #expect(Rotation.seed(for: "a") == 0xAF63_DC4C_8601_EC8C)
+        #expect(Rotation.seed(for: "inspo-syd5sijpqmk") != Rotation.seed(for: "inspo"))
+    }
+
+    @Test func screenIndexFollowsTheClock() {
+        #expect(Rotation.screenIndex(at: Date(timeIntervalSince1970: 359), interval: 180) == 1)
+        #expect(Rotation.screenIndex(at: Date(timeIntervalSince1970: 360), interval: 180) == 2)
     }
 
     @Test func fewerBlocksThanTiles() {
-        var generator = SeededGenerator(state: 3)
-        var deck = Deck()
-        deck.sync(with: [7, 8, 9], using: &generator)
-        let screens = deck.deal(screens: 2, perScreen: 6, using: &generator)
-        #expect(screens.map { Set($0) } == [[7, 8, 9], [7, 8, 9]])
+        #expect(Set(Rotation.screen(5, of: [7, 8, 9], perScreen: 6, seed: 1)) == [7, 8, 9])
     }
 
-    @Test func duplicateIdsAreIgnored() {
-        var generator = SeededGenerator(state: 2)
-        var deck = Deck()
-        deck.sync(with: [1, 2, 2, 3, 1], using: &generator)
-        #expect(deck.order.sorted() == [1, 2, 3])
-    }
-
-    @Test func emptyDeck() {
-        var generator = SeededGenerator(state: 1)
-        var deck = Deck()
-        deck.sync(with: [], using: &generator)
-        #expect(deck.deal(screens: 20, perScreen: 6, using: &generator).isEmpty)
+    @Test func emptyChannel() {
+        #expect(Rotation.screen(5, of: [], perScreen: 6, seed: 1).isEmpty)
     }
 }
 
@@ -253,29 +186,6 @@ private struct SeededGenerator: RandomNumberGenerator {
 
     @Test func garbageReturnsNil() {
         #expect(ImagePipeline.thumbnail(from: Data("nope".utf8), filling: CGSize(width: 100, height: 100)) == nil)
-    }
-}
-
-@Suite struct ThumbnailCache {
-    @Test func pruneKeepsMostRecentlyUsed() throws {
-        let directory = temporaryDirectory()
-        defer { try? FileManager.default.removeItem(at: directory) }
-        let cache = ImageCache(directory: directory)
-        let size = CGSize(width: 10, height: 10)
-        for id in 1...5 {
-            let file = cache.fileURL(blockID: id, pixelSize: size)
-            try cache.store(Data([UInt8(id)]), at: file)
-            try FileManager.default.setAttributes(
-                [.modificationDate: Date(timeIntervalSince1970: Double(id) * 1000)],
-                ofItemAtPath: file.path(percentEncoded: false)
-            )
-        }
-
-        #expect(cache.touch(cache.fileURL(blockID: 1, pixelSize: size)))
-        cache.prune(keeping: 3)
-
-        #expect((1...5).filter { cache.contains(blockID: $0, pixelSize: size) } == [1, 4, 5])
-        #expect(!cache.touch(cache.fileURL(blockID: 2, pixelSize: size)))
     }
 }
 

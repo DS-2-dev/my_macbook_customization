@@ -24,7 +24,7 @@ struct ChannelWidgetView: View {
     @ViewBuilder private var message: some View {
         switch entry.status {
         case .notFound: Caption("Channel not found")
-        case .unauthorized: Caption("Private channel. Add a token in the Are.na Widget app.")
+        case .unauthorized: Caption("This channel is private")
         case .loaded where tiles.isEmpty: Caption("No blocks yet")
         default: EmptyView()
         }
@@ -43,12 +43,34 @@ private struct TileGrid: View {
                 HStack(spacing: GridSpec.gap) {
                     ForEach(0..<grid.columns, id: \.self) { column in
                         let index = row * grid.columns + column
-                        TileView(tile: index < tiles.count ? tiles[index] : nil, cell: cell, showTitle: showTitles)
-                            .frame(width: cell.width, height: cell.height)
+                        TileSlot(tile: index < tiles.count ? tiles[index] : nil, index: index, cell: cell, showTitle: showTitles)
                     }
                 }
             }
         }
+    }
+}
+
+/// One grid position. When the rotation moves on, the old block blurs out and
+/// the new one blurs in, staggered across the grid so the change sweeps
+/// rather than flashing. WidgetKit caps entry animations at about 2 seconds.
+private struct TileSlot: View {
+    let tile: Tile?
+    let index: Int
+    let cell: CGSize
+    let showTitle: Bool
+
+    var body: some View {
+        // A ZStack per slot keeps the outgoing and incoming tiles stacked in
+        // place while they cross, instead of pushing each other in the row.
+        ZStack {
+            TileView(tile: tile, cell: cell, showTitle: showTitle)
+                .id(tile?.id)
+                .transition(.blurReplace)
+        }
+        .frame(width: cell.width, height: cell.height)
+        .clipped()
+        .animation(.smooth(duration: 1.1).delay(Double(index) * 0.08), value: tile?.id)
     }
 }
 
@@ -74,8 +96,7 @@ private struct TileView: View {
         return ZStack(alignment: .bottomLeading) {
             switch tile.kind {
             case .image:
-                // Views render inside the extension, which can read its own thumbnail cache.
-                if let file = tile.imageFile, let data = try? Data(contentsOf: file), let image = NSImage(data: data) {
+                if let data = tile.imageData, let image = NSImage(data: data) {
                     Image(nsImage: image)
                         .resizable()
                         .interpolation(.high)
