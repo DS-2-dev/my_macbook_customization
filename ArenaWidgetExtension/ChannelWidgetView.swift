@@ -11,36 +11,14 @@ struct ChannelWidgetView: View {
     var body: some View {
         let grid = GridSpec(family)
         GeometryReader { geometry in
-            let side = grid.side(fitting: geometry.size)
-            VStack(alignment: .leading, spacing: GridSpec.headerSpacing) {
-                header
-                    .frame(width: grid.width(side: side), height: GridSpec.headerHeight)
-                TileGrid(grid: grid, side: side, tiles: tiles, showTitles: entry.showTitles)
-                    .overlay { message }
-            }
-            .frame(width: geometry.size.width, height: geometry.size.height)
+            TileGrid(grid: grid, cell: grid.cellSize(in: geometry.size), tiles: tiles, showTitles: entry.showTitles)
         }
+        // Outer tile corners follow the widget's own rounded corners.
+        .clipShape(ContainerRelativeShape())
+        .overlay { message }
+        .padding(GridSpec.gap)
         .redacted(reason: entry.status == .placeholder ? .placeholder : [])
         .widgetURL(family == .systemSmall ? tiles.first?.link : ArenaLink.channel(entry.slug))
-    }
-
-    private var header: some View {
-        Link(destination: ArenaLink.channel(entry.slug)) {
-            HStack(spacing: 6) {
-                Text(entry.snapshot?.title ?? entry.slug)
-                    .fontWeight(.medium)
-                    .lineLimit(1)
-                Spacer(minLength: 4)
-                if let count = entry.snapshot?.blockCount {
-                    Text(family == .systemSmall ? "\(count)" : "\(count) blocks")
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
-                        .lineLimit(1)
-                }
-            }
-            .font(.system(size: 11))
-        }
-        .buttonStyle(.plain)
     }
 
     @ViewBuilder private var message: some View {
@@ -55,7 +33,7 @@ struct ChannelWidgetView: View {
 
 private struct TileGrid: View {
     let grid: GridSpec
-    let side: CGFloat
+    let cell: CGSize
     let tiles: [Tile]
     let showTitles: Bool
 
@@ -65,8 +43,8 @@ private struct TileGrid: View {
                 HStack(spacing: GridSpec.gap) {
                     ForEach(0..<grid.columns, id: \.self) { column in
                         let index = row * grid.columns + column
-                        TileView(tile: index < tiles.count ? tiles[index] : nil, side: side, showTitle: showTitles)
-                            .frame(width: side, height: side)
+                        TileView(tile: index < tiles.count ? tiles[index] : nil, cell: cell, showTitle: showTitles)
+                            .frame(width: cell.width, height: cell.height)
                     }
                 }
             }
@@ -77,7 +55,7 @@ private struct TileGrid: View {
 private struct TileView: View {
     @Environment(\.colorScheme) private var colorScheme
     let tile: Tile?
-    let side: CGFloat
+    let cell: CGSize
     let showTitle: Bool
 
     var body: some View {
@@ -92,7 +70,8 @@ private struct TileView: View {
     }
 
     private func content(_ tile: Tile) -> some View {
-        ZStack(alignment: .bottomLeading) {
+        let shortSide = min(cell.width, cell.height)
+        return ZStack(alignment: .bottomLeading) {
             switch tile.kind {
             case .image:
                 if let data = tile.imageData, let image = NSImage(data: data) {
@@ -101,7 +80,7 @@ private struct TileView: View {
                         .interpolation(.high)
                         .widgetAccentedRenderingMode(.fullColor)
                         .scaledToFill()
-                        .frame(width: side, height: side)
+                        .frame(width: cell.width, height: cell.height)
                 } else {
                     Palette.tile(colorScheme)
                 }
@@ -109,24 +88,24 @@ private struct TileView: View {
                 Palette.tile(colorScheme)
                     .overlay(alignment: .topLeading) {
                         Text(tile.text ?? "")
-                            .font(.system(size: min(12, max(8, side / 10))))
+                            .font(.system(size: min(13, max(9, shortSide / 11))))
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                            .padding(side > 90 ? 7 : 5)
+                            .padding(shortSide > 100 ? 9 : 6)
                     }
             }
 
             if showTitle, let title = tile.title, title != tile.text {
                 Text(title)
-                    .font(.system(size: 9, weight: .medium))
+                    .font(.system(size: 10, weight: .medium))
                     .lineLimit(1)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 2)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Palette.background(colorScheme).opacity(0.9))
             }
         }
-        .frame(width: side, height: side)
+        .frame(width: cell.width, height: cell.height)
         .clipped()
     }
 }

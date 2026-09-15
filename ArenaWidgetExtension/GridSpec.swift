@@ -9,11 +9,8 @@ struct GridSpec: Equatable {
 
     var count: Int { columns * rows }
 
+    /// Space between tiles, and between the tiles and the widget's edge.
     static let gap: CGFloat = 4
-    static let headerHeight: CGFloat = 14
-    static let headerSpacing: CGFloat = 8
-    /// Approximate default content margin of a macOS widget; only used to size downloads.
-    static let contentMargin: CGFloat = 14
 
     init(columns: Int, rows: Int) {
         self.columns = columns
@@ -23,31 +20,29 @@ struct GridSpec: Equatable {
     init(_ family: WidgetFamily) {
         switch family {
         case .systemSmall: self.init(columns: 1, rows: 1)
-        case .systemLarge: self.init(columns: 3, rows: 3)
-        case .systemExtraLarge: self.init(columns: 6, rows: 3)
-        default: self.init(columns: 4, rows: 1)
+        case .systemLarge: self.init(columns: 2, rows: 2)
+        case .systemExtraLarge: self.init(columns: 3, rows: 2)
+        default: self.init(columns: 2, rows: 1)
         }
     }
 
-    /// Side length of each square tile when the header and grid must fit in `size`.
-    func side(fitting size: CGSize) -> CGFloat {
-        let gridHeight = size.height - Self.headerHeight - Self.headerSpacing
-        let byWidth = (size.width - Self.gap * CGFloat(columns - 1)) / CGFloat(columns)
-        let byHeight = (gridHeight - Self.gap * CGFloat(rows - 1)) / CGFloat(rows)
-        return max(0, min(byWidth, byHeight).rounded(.down))
-    }
-
-    func width(side: CGFloat) -> CGFloat {
-        side * CGFloat(columns) + Self.gap * CGFloat(columns - 1)
-    }
-
-    /// Pixel edge to downsample thumbnails to for a widget of `displaySize` points.
-    func pixelSize(for displaySize: CGSize, scale: CGFloat = 2) -> Int {
-        guard displaySize.width > 0, displaySize.height > 0 else { return 240 }
-        let content = CGSize(
-            width: displaySize.width - 2 * Self.contentMargin,
-            height: displaySize.height - 2 * Self.contentMargin
+    /// Size of each tile when the grid fills `size`.
+    func cellSize(in size: CGSize) -> CGSize {
+        CGSize(
+            width: max(0, (size.width - Self.gap * CGFloat(columns - 1)) / CGFloat(columns)),
+            height: max(0, (size.height - Self.gap * CGFloat(rows - 1)) / CGFloat(rows))
         )
-        return min(400, max(64, Int((side(fitting: content) * scale).rounded(.up))))
+    }
+
+    /// Pixel size to downsample thumbnails to for a widget of `displaySize` points.
+    func pixelSize(for displaySize: CGSize, scale: CGFloat = 2, limit: CGFloat = 800) -> CGSize {
+        guard displaySize.width > 0, displaySize.height > 0 else { return CGSize(width: 320, height: 320) }
+        let cell = cellSize(in: CGSize(
+            width: displaySize.width - 2 * Self.gap,
+            height: displaySize.height - 2 * Self.gap
+        ))
+        let pixels = CGSize(width: cell.width * scale, height: cell.height * scale)
+        let shrink = min(1, limit / max(pixels.width, pixels.height, 1))
+        return CGSize(width: (pixels.width * shrink).rounded(.up), height: (pixels.height * shrink).rounded(.up))
     }
 }

@@ -104,14 +104,20 @@ public struct ArenaImage: Decodable, Sendable {
 
     public struct Variant: Decodable, Sendable {
         public var src: String?
+        /// Same rendition at twice the pixel dimensions (never upscaled past the original).
+        public var src2x: String?
         public var width: Double?
         public var height: Double?
 
-        enum CodingKeys: String, CodingKey { case src, width, height }
+        enum CodingKeys: String, CodingKey {
+            case src, width, height
+            case src2x = "src_2x"
+        }
 
         public init(from decoder: any Decoder) throws {
             let c = try decoder.container(keyedBy: CodingKeys.self)
             src = c.lenient(String.self, .src)
+            src2x = c.lenient(String.self, .src2x)
             width = c.lenient(Double.self, .width)
             height = c.lenient(Double.self, .height)
         }
@@ -127,13 +133,24 @@ public struct ArenaImage: Decodable, Sendable {
         large = c.lenient(Variant.self, .large)
     }
 
-    /// The smallest rendition that still covers a widget tile. `small` is the
-    /// v3 equivalent of v2's `thumb` (400px on the long edge). Never the original.
-    public var thumbnailURL: URL? {
-        [small, square, medium]
-            .lazy
-            .compactMap { $0?.src.flatMap(URL.init(string:)) }
-            .first
+    /// The smallest rendition that fills a tile of `size` pixels without upscaling.
+    /// `small` is the v3 equivalent of v2's `thumb` (400px on the long edge) and
+    /// its `src_2x` is 800px; `medium` is only used when `small` is missing. Never
+    /// the original.
+    public func thumbnailURL(covering size: CGSize) -> URL? {
+        let candidates: [(src: String?, width: Double?, height: Double?)] = [
+            (small?.src, small?.width, small?.height),
+            (small?.src2x, small?.width.map { $0 * 2 }, small?.height.map { $0 * 2 }),
+            (medium?.src, medium?.width, medium?.height),
+        ]
+        let covering = candidates.first { candidate in
+            guard candidate.src != nil, let width = candidate.width, let height = candidate.height,
+                  width > 0, height > 0 else { return false }
+            // Aspect-fill scale; allow a hair of upscaling rather than jumping a size.
+            return max(size.width / width, size.height / height) <= 1.05
+        }
+        return (covering?.src ?? small?.src2x ?? small?.src ?? square?.src ?? medium?.src)
+            .flatMap(URL.init(string:))
     }
 }
 

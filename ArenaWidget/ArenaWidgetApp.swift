@@ -1,6 +1,7 @@
 import AppKit
 import ArenaKit
 import SwiftUI
+import WidgetKit
 
 @main
 struct ArenaWidgetApp: App {
@@ -36,6 +37,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         didFinishLaunching = true
         if launchedForURL {
             NSApp.terminate(nil)
+        } else {
+            // Pick up layout changes right away after installing a new build.
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 

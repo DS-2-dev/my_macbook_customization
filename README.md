@@ -1,7 +1,7 @@
 # Are.na Widget
 
-A macOS widget that shows recent blocks from an Are.na channel. Images are drawn
-as a square grid, text blocks as text. Clicking a block opens it on are.na.
+A macOS widget that shows recent blocks from an Are.na channel. Images fill a
+grid of tiles, text blocks are drawn as text. Clicking a block opens it on are.na.
 
 - `ArenaWidget/`: the containing app. One window with setup instructions. It
   exists because macOS widgets have to ship inside an app, and it forwards
@@ -61,7 +61,8 @@ version, run `killall chronod NotificationCenter`.
 
 A new widget shows `inspo-syd5sijpqmk` until you pick another channel.
 
-Sizes: small shows 1 block, medium 4, large 9, extra large 18. The widget
+Sizes: small shows 1 block, medium 2, large 4, extra large 6. Tiles fill the
+widget; to change the counts, edit `GridSpec.init(_:)`. The widget
 refreshes every 30 minutes. If the network is down it keeps showing the last
 blocks it fetched.
 

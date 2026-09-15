@@ -22,14 +22,17 @@ private func fixture(_ name: String) throws -> Data {
         let page = try JSONDecoder().decode(ArenaContentsPage.self, from: fixture("contents"))
         let weird = try #require(page.blocks.first { $0.id == 5 })
         #expect(weird.title == nil)
-        #expect(weird.image?.thumbnailURL == nil)
+        #expect(weird.image?.thumbnailURL(covering: CGSize(width: 100, height: 100)) == nil)
     }
 
-    @Test func imageBlockUsesSmallRendition() throws {
+    @Test func imagePicksSmallestRenditionThatCoversTheTile() throws {
         let page = try JSONDecoder().decode(ArenaContentsPage.self, from: fixture("contents"))
-        let image = try #require(page.blocks.first)
-        #expect(image.type == "Image")
-        #expect(image.image?.thumbnailURL == image.image?.small?.src.flatMap(URL.init(string:)))
+        let block = try #require(page.blocks.first)
+        let image = try #require(block.image)
+        #expect(block.type == "Image")
+        // Fixture's `small` is 400x267.
+        #expect(image.thumbnailURL(covering: CGSize(width: 200, height: 200))?.absoluteString == image.small?.src)
+        #expect(image.thumbnailURL(covering: CGSize(width: 470, height: 346))?.absoluteString == image.small?.src2x)
     }
 
     @Test func textAndLinkBlocks() throws {
@@ -38,7 +41,7 @@ private func fixture(_ name: String) throws -> Data {
         #expect(text.content?.markdown?.contains("Umberto Eco") == true)
         let link = try #require(page.blocks.first { $0.type == "Link" })
         #expect(link.source?.url != nil)
-        #expect(link.image?.thumbnailURL != nil)
+        #expect(link.image?.thumbnailURL(covering: CGSize(width: 100, height: 100)) != nil)
     }
 
     @Test func channel() throws {
@@ -103,19 +106,33 @@ private func fixture(_ name: String) throws -> Data {
         return data as Data
     }
 
-    @Test func landscapeIsDownsampledAndCroppedSquare() throws {
-        let input = try encodedImage(width: 900, height: 600, type: .png)
-        let output = try #require(ImagePipeline.squareThumbnail(from: input, side: 120))
-        let source = try #require(CGImageSourceCreateWithData(output as CFData, nil))
+    private func decodedSize(_ data: Data) throws -> (width: Int, height: Int, type: String?) {
+        let source = try #require(CGImageSourceCreateWithData(data as CFData, nil))
         let image = try #require(CGImageSourceCreateImageAtIndex(source, 0, nil))
-        #expect(image.width == 120)
-        #expect(image.height == 120)
-        #expect(CGImageSourceGetType(source) as String? == UTType.jpeg.identifier)
+        return (image.width, image.height, CGImageSourceGetType(source) as String?)
+    }
+
+    @Test(arguments: [(120, 120), (200, 100), (100, 160)])
+    func downsampledAndCroppedToTileShape(width: Int, height: Int) throws {
+        let input = try encodedImage(width: 900, height: 600, type: .png)
+        let output = try #require(ImagePipeline.thumbnail(from: input, filling: CGSize(width: width, height: height)))
+        let decoded = try decodedSize(output)
+        #expect(decoded.width == width)
+        #expect(decoded.height == height)
+        #expect(decoded.type == UTType.jpeg.identifier)
         #expect(output.count < input.count)
     }
 
+    @Test func smallSourceIsCroppedButNotUpscaled() throws {
+        let input = try encodedImage(width: 90, height: 60, type: .png)
+        let output = try #require(ImagePipeline.thumbnail(from: input, filling: CGSize(width: 200, height: 200)))
+        let decoded = try decodedSize(output)
+        #expect(decoded.width == 60)
+        #expect(decoded.height == 60)
+    }
+
     @Test func garbageReturnsNil() {
-        #expect(ImagePipeline.squareThumbnail(from: Data("nope".utf8), side: 100) == nil)
+        #expect(ImagePipeline.thumbnail(from: Data("nope".utf8), filling: CGSize(width: 100, height: 100)) == nil)
     }
 }
 

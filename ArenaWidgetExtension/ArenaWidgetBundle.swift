@@ -21,5 +21,7 @@ struct ChannelWidget: Widget {
         .configurationDisplayName("Are.na Channel")
         .description("Recent blocks from an Are.na channel.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
+        // The grid sets its own thin margin so the tiles fill the widget.
+        .contentMarginsDisabled()
     }
 }

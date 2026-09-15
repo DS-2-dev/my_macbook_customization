@@ -53,7 +53,7 @@ public struct SnapshotBuilder: Sendable {
         self.images = images
     }
 
-    public func build(slug: String, limit: Int, pixelSize: Int) async throws -> ChannelSnapshot {
+    public func build(slug: String, limit: Int, pixelSize: CGSize) async throws -> ChannelSnapshot {
         async let channel = client.channel(slug)
         async let page = client.contents(slug, per: max(1, limit))
         let (meta, contents) = try await (channel, page)
@@ -69,7 +69,7 @@ public struct SnapshotBuilder: Sendable {
         )
     }
 
-    private func makeTiles(_ blocks: [ArenaBlock], pixelSize: Int) async -> [Tile] {
+    private func makeTiles(_ blocks: [ArenaBlock], pixelSize: CGSize) async -> [Tile] {
         await withTaskGroup(of: (Int, Tile).self) { group in
             var tiles = [Tile?](repeating: nil, count: blocks.count)
             for (index, block) in blocks.enumerated() {
@@ -85,11 +85,11 @@ public struct SnapshotBuilder: Sendable {
         }
     }
 
-    private func tile(for block: ArenaBlock, pixelSize: Int) async -> Tile {
+    private func tile(for block: ArenaBlock, pixelSize: CGSize) async -> Tile {
         let link = ArenaLink.widgetURL(for: block)
         let title = block.displayTitle
         // Image, Link, Embed and Attachment blocks usually carry an image; draw them all as images.
-        if let url = block.image?.thumbnailURL,
+        if let url = block.image?.thumbnailURL(covering: pixelSize),
            let data = try? await images.thumbnail(from: url, pixelSize: pixelSize) {
             return Tile(id: block.id, kind: .image, title: title, text: nil, imageData: data, link: link)
         }

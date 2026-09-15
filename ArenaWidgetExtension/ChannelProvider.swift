@@ -63,9 +63,10 @@ struct ChannelProvider: AppIntentTimelineProvider {
         let snapshot = try await builder.build(slug: request.slug, limit: request.grid.count, pixelSize: request.pixelSize)
         cache.save(snapshot, key: request.cacheKey)
         let bytes = snapshot.tiles.reduce(0) { $0 + ($1.imageData?.count ?? 0) }
-        log.info("""
+        log.notice("""
             fetched \(request.slug, privacy: .public) \(request.grid.columns)x\(request.grid.rows) \
-            tiles=\(snapshot.tiles.count) px=\(request.pixelSize) bytes=\(bytes) \
+            tiles=\(snapshot.tiles.count) px=\(Int(request.pixelSize.width))x\(Int(request.pixelSize.height)) \
+            bytes=\(bytes) \
             peakMB=\(Diagnostics.peakFootprintMB(), format: .fixed(precision: 1))
             """)
         return snapshot
@@ -84,7 +85,7 @@ private struct FetchRequest {
     let slug: String
     let showTitles: Bool
     let grid: GridSpec
-    let pixelSize: Int
+    let pixelSize: CGSize
 
     init(_ configuration: ChannelConfigurationIntent, _ context: TimelineProviderContext) {
         slug = configuration.slug
