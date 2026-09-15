@@ -12,6 +12,7 @@ final class NotchController {
     private let content = TrackingView()
     private let feed = NowPlayingFeed()
     private let artwork = ArtworkLoader()
+    private var spaceIsolation: SpaceIsolation?
     private var observers: [(NotificationCenter, NSObjectProtocol)] = []
     private var monitors: [Any] = []
     private let log = Logger(subsystem: "com.dantesmith.NowPlayingNotch", category: "geometry")
@@ -36,6 +37,23 @@ final class NotchController {
 
         relayout()
         panel.orderFrontRegardless()
+        // Its own Space, so swiping between Spaces doesn't slide it out from
+        // under the notch. Falls back to joining every Space if unavailable.
+        spaceIsolation = SpaceIsolation()
+        spaceIsolation?.add(panel)
+        // In a Space above everything it could show over the lock screen,
+        // and a track has no business there.
+        let distributed = DistributedNotificationCenter.default()
+        observers.append((distributed, distributed.addObserver(forName: Notification.Name("com.apple.screenIsLocked"), object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.panel.orderOut(nil) }
+        }))
+        observers.append((distributed, distributed.addObserver(forName: Notification.Name("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                self.panel.orderFrontRegardless()
+                self.spaceIsolation?.add(self.panel)
+            }
+        }))
 
         observe(NotificationCenter.default, NSApplication.didChangeScreenParametersNotification)
         observe(NotificationCenter.default, NSWindow.didChangeScreenNotification, object: panel)
@@ -78,9 +96,24 @@ final class NotchController {
     /// out even when the answer itself hasn't changed.
     private func show(_ answer: NowPlaying?) {
         let next = answer.flatMap { $0.isRecent(at: .now, within: NowPlayingFeed.recentWindow) ? $0 : nil }
-        // Every answer, even an unchanged one: art that failed gets retried.
-        artwork.show(next?.art)
-        guard next != layout.track else { return }
+        let current = layout.track
+        guard next != current else {
+            // Nothing new, but art that failed gets another try.
+            artwork.show(next?.art)
+            return
+        }
+        log.notice("showing \(next.map { "\($0.track ?? "?") (\($0.playing ? "playing" : "last played"))" } ?? "nothing", privacy: .public)")
+        let animated = !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+
+        if let next, let current, next.identity != current.identity {
+            changeTrack(to: next, animated: animated)
+            return
+        }
+
+        // Appearing, going, or the same track with news: playing to stopped,
+        // or the time it was played. No handover needed.
+        swap?.cancel()
+        layout.swapping = false
         if next == nil, layout.expanded {
             // Nothing left to show under the pointer: close before going.
             pendingHover?.cancel()
@@ -88,9 +121,36 @@ final class NotchController {
             layout.expanded = false
             close()
         }
-        let animation = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? nil : NotchStyle.appearSpring
-        withAnimation(animation) { layout.track = next }
-        log.notice("showing \(next.map { "\($0.track ?? "?") (\($0.playing ? "playing" : "last played"))" } ?? "nothing", privacy: .public)")
+        artwork.show(next?.art)
+        withAnimation(animated ? NotchStyle.appearSpring : nil) { layout.track = next }
+    }
+
+    /// One track handing over to the next, the way the card on the site
+    /// does it: the new art is fetched first, the old art and words fade out
+    /// with a little blur, the new ones go in while nothing shows, and they
+    /// fade back in. The same in the resting wing and the open panel.
+    private func changeTrack(to next: NowPlaying, animated: Bool) {
+        swap?.cancel()
+        swap = Task { [weak self] in
+            guard let self else { return }
+            // Instant for art already on disk; a new album gets a moment.
+            let art = await self.artwork.prepare(next.art, patience: NotchStyle.artPatience)
+            guard !Task.isCancelled else { return }
+            guard animated else {
+                self.put(next, art)
+                return
+            }
+            withAnimation(NotchStyle.swapOut) { self.layout.swapping = true }
+            guard await Self.wait(NotchStyle.swapOutDuration) else { return }
+            self.put(next, art)
+            withAnimation(NotchStyle.swapIn) { self.layout.swapping = false }
+        }
+    }
+
+    private func put(_ track: NowPlaying, _ art: (image: NSImage?, failed: Bool)) {
+        layout.track = track
+        layout.artwork = art.image
+        layout.artworkFailed = art.failed
     }
 
     private func observe(_ center: NotificationCenter, _ name: Notification.Name, object: AnyObject? = nil) {
@@ -194,6 +254,8 @@ final class NotchController {
 
     /// The steps currently running, cancelled when the pointer changes its mind.
     private var sequence: Task<Void, Never>?
+    /// A track change in progress, cancelled if another one arrives.
+    private var swap: Task<Void, Never>?
 
     /// Out to the full width, then down, then the text. A step that's
     /// already done is skipped along with its wait, so coming back in
@@ -269,6 +331,8 @@ final class NotchLayout {
     var artwork: NSImage?
     /// The track has art but it wouldn't load: shown as text only.
     var artworkFailed = false
+    /// Between the old track fading out and the new one fading in.
+    var swapping = false
     /// The pointer is over it, so it's opening or open.
     var expanded = false
     /// The steps of opening, each animated in turn by the controller.

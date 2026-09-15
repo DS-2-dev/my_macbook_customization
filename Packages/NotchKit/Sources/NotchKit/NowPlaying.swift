@@ -75,6 +75,12 @@ public struct NowPlaying: Equatable, Sendable, Decodable {
 }
 
 extension NowPlaying {
+    /// Which song this is, whatever its state: the same identity going from
+    /// playing to stopped is news about one track, not a new one.
+    public var identity: String {
+        "\(track ?? "")\n\(artist ?? "")"
+    }
+
     /// Worth showing: playing now, or played within `window`. Otherwise the
     /// notch is left alone.
     public func isRecent(at now: Date, within window: TimeInterval) -> Bool {

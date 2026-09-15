@@ -34,7 +34,7 @@ enum NotchStyle {
     /// The album art in the wing. 22 in a 32-tall notch and a 32-wide wing
     /// leaves 5pt of black all round.
     static let restingArtSize: CGFloat = 22
-    static let restingArtCornerRadius: CGFloat = 5
+    static let restingArtCornerRadius: CGFloat = 4
 
     // MARK: Expanded state
 
@@ -45,7 +45,7 @@ enum NotchStyle {
     /// Inset from the surface's edges, below the notch.
     static let contentPadding: CGFloat = 14
     static let expandedArtSize: CGFloat = 72
-    static let expandedArtCornerRadius: CGFloat = 10
+    static let expandedArtCornerRadius: CGFloat = 8
     /// Between the art and the text.
     static let textGap: CGFloat = 14
     static let lineSpacing: CGFloat = 2
@@ -84,6 +84,19 @@ enum NotchStyle {
     /// nothing has for a while, and a new track arriving.
     static let appearSpring = Animation.spring(response: 0.45, dampingFraction: 0.86)
 
+    // Changing track, the way the card on the site does it: the new art is
+    // fetched first, the old art and words fade out with a little blur, the
+    // new ones go in while nothing shows, and they fade back in.
+
+    static let swapOut = Animation.easeIn(duration: 0.18)
+    static let swapOutDuration: TimeInterval = 0.18
+    static let swapIn = Animation.easeOut(duration: 0.32)
+    static let swapBlur: CGFloat = 6
+    /// How far the words drop as they go.
+    static let swapDrop: CGFloat = 3
+    /// How long a change waits for new art before going ahead without it.
+    static let artPatience: Duration = .milliseconds(1500)
+
     // MARK: Playing bars
 
     /// The three bars before "Listening now", as on dantesmith.studio: 2pt
@@ -107,9 +120,12 @@ enum NotchStyle {
     static let marqueeSpeed: Double = 30
     /// Between the end of the text and its second copy.
     static let marqueeGap: CGFloat = 40
-    /// How long it holds still when it first appears, so it can be read from
-    /// its first letter. It never holds again after that.
-    static let marqueeHold: TimeInterval = 1.2
+    /// How long it rests at its start: when it first appears, and again
+    /// after every pass, the way Apple Music's titles do.
+    static let marqueePause: TimeInterval = 2.0
+    /// How long it takes to get up to speed leaving a rest, and to slow
+    /// down into the next one.
+    static let marqueeRamp: TimeInterval = 0.45
     /// The soft edges: the start only once it's moving, the end always.
     static let marqueeLeadingFade: CGFloat = 10
     static let marqueeTrailingFade: CGFloat = 18

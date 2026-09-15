@@ -1,11 +1,12 @@
+import NotchKit
 import SwiftUI
 
 /// One line of text that scrolls when it's too long for its line, the way
 /// the listening card on dantesmith.studio does it: set twice with a gap and
-/// drifting left at one steady pace, so the second copy arrives exactly where
-/// the first began and the loop has no seam. It holds still for a moment when
-/// it first appears so it can be read from its first letter. Text that fits,
-/// and anything with Reduce Motion on, stays still; the latter ends in "…".
+/// scrolled one pass at a time, so the second copy arrives exactly where the
+/// first began and the loop has no seam. Between passes it rests at the
+/// start, the way Apple Music's titles do. Text that fits, and anything with
+/// Reduce Motion on, stays still; the latter ends in "…".
 ///
 /// The font and colour come from the environment, like a Text's.
 struct MarqueeText: View {
@@ -49,18 +50,18 @@ struct MarqueeText: View {
     private func line(width: CGFloat) -> some View {
         if textWidth > width + 0.5, !reduceMotion {
             TimelineView(.animation(minimumInterval: 1.0 / 60)) { context in
-                let travelled = max(0, context.date.timeIntervalSince(appearedAt) - NotchStyle.marqueeHold) * NotchStyle.marqueeSpeed
                 let loop = textWidth + NotchStyle.marqueeGap
+                let x = CGFloat(Self.offset(after: context.date.timeIntervalSince(appearedAt), loop: Double(loop)))
                 HStack(spacing: NotchStyle.marqueeGap) {
                     Text(text)
                     Text(text)
                 }
                 .fixedSize()
-                .offset(x: -CGFloat(travelled.truncatingRemainder(dividingBy: Double(loop))))
+                .offset(x: -x)
                 .frame(width: width, alignment: .leading)
-                // The leading edge softens as the text starts moving rather
-                // than dimming the first letter while it's being read.
-                .mask(edges(width: width, leading: min(NotchStyle.marqueeLeadingFade, CGFloat(travelled))))
+                // The leading edge is soft only while the text moves, so it
+                // rests with a crisp first letter at the start.
+                .mask(edges(width: width, leading: min(NotchStyle.marqueeLeadingFade, x, loop - x)))
             }
         } else {
             Text(text)
@@ -68,6 +69,18 @@ struct MarqueeText: View {
                 .truncationMode(.tail)
                 .frame(width: width, alignment: .leading)
         }
+    }
+
+    /// How far the text has scrolled `elapsed` seconds after appearing:
+    /// NotchKit's `Marquee`, with the tunable pace, rest and ramp.
+    static func offset(after elapsed: TimeInterval, loop distance: Double) -> Double {
+        Marquee.offset(
+            after: elapsed,
+            distance: distance,
+            speed: NotchStyle.marqueeSpeed,
+            pause: NotchStyle.marqueePause,
+            ramp: NotchStyle.marqueeRamp
+        )
     }
 
     /// Opaque in the middle, fading out over `leading` points at the start

@@ -48,6 +48,14 @@ import Testing
         #expect(!NowPlaying(playing: true, track: nil, artist: nil).isRecent(at: now, within: window))
     }
 
+    @Test func identityIgnoresState() {
+        let playing = NowPlaying(playing: true, track: "Nights", artist: "Frank Ocean")
+        let stopped = NowPlaying(playing: false, track: "Nights", artist: "Frank Ocean", playedAt: .now)
+        #expect(playing.identity == stopped.identity)
+        #expect(playing.identity != NowPlaying(playing: true, track: "Ivy", artist: "Frank Ocean").identity)
+        #expect(playing.identity != NowPlaying(playing: true, track: "Nights", artist: "Someone Else").identity)
+    }
+
     @Test func statusLine() {
         let now = Date(timeIntervalSince1970: 100_000)
         #expect(NowPlaying(playing: true, track: "a", artist: "b").status(at: now) == "Listening now")

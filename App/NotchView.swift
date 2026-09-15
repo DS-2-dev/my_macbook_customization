@@ -38,11 +38,17 @@ struct NotchView: View {
                         details(track)
                             .frame(width: frames.text.width, height: frames.text.height, alignment: .leading)
                             .offset(x: frames.text.minX, y: frames.text.minY)
+                            // Dropping a little as they go when the track changes.
+                            .offset(y: layout.swapping ? NotchStyle.swapDrop : 0)
                             .transition(.asymmetric(insertion: .opacity.combined(with: .offset(y: -3)), removal: .opacity))
                     }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            // A track change: art and words fade out with a little blur and
+            // back in, in the wing and the open panel alike.
+            .opacity(layout.swapping ? 0 : 1)
+            .blur(radius: layout.swapping ? NotchStyle.swapBlur : 0)
             .mask(NotchSurface(geometry: frames.surface))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -91,10 +97,13 @@ struct NotchView: View {
             HStack(alignment: .center, spacing: NotchStyle.barSpacing) {
                 if track.playing {
                     PlayingBars()
+                        .transition(.opacity.combined(with: .scale(scale: 0.4, anchor: .leading)))
                 }
                 TimelineView(.periodic(from: .now, by: 30)) { context in
                     Text(track.status(at: context.date))
                         .font(NotchStyle.statusFont)
+                        // "Listening now" turning into "Last played …" morphs.
+                        .contentTransition(.interpolate)
                 }
             }
             .foregroundStyle(NotchStyle.tertiaryText)
