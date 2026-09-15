@@ -1,0 +1,372 @@
+{
+ "data": [
+  {
+   "id": 35243538,
+   "type": "Image",
+   "created_at": "2025-03-14T16:15:32Z",
+   "updated_at": "2026-09-13T23:47:37Z",
+   "base_type": "Block",
+   "title": "g1p2_droidviews.jpg",
+   "description": null,
+   "state": "available",
+   "visibility": "public",
+   "comment_count": 0,
+   "metadata": null,
+   "user": {
+    "id": 746519,
+    "type": "User",
+    "name": "lok \u2736",
+    "slug": "lok",
+    "avatar": "https://static.avatars.are.na/746519/large_3e2b6852c5a5ed2a654234e10ee2f340.png?1779414982",
+    "initials": "l\u2736"
+   },
+   "source": null,
+   "image": {
+    "alt_text": null,
+    "blurhash": "LSI#Vp%yofs+${o|VtjZ0kIBnPX8",
+    "width": 960,
+    "height": 640,
+    "src": "https://d2w9rnfcy7mm78.cloudfront.net/35243538/original_c1f5a36d87200449f47010f4bec484fc.jpg?1741968933",
+    "aspect_ratio": 1.5,
+    "content_type": "image/jpeg",
+    "filename": "c1f5a36d87200449f47010f4bec484fc.jpg",
+    "file_size": 103385,
+    "updated_at": "2025-03-14T16:15:33Z",
+    "small": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNTI0MzUzOC9vcmlnaW5hbF9jMWY1YTM2ZDg3MjAwNDQ5ZjQ3MDEwZjRiZWM0ODRmYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjQwMCwiaGVpZ2h0Ijo0MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNTI0MzUzOC9vcmlnaW5hbF9jMWY1YTM2ZDg3MjAwNDQ5ZjQ3MDEwZjRiZWM0ODRmYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjgwMCwiaGVpZ2h0Ijo4MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "width": 400,
+     "height": 267
+    },
+    "medium": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNTI0MzUzOC9vcmlnaW5hbF9jMWY1YTM2ZDg3MjAwNDQ5ZjQ3MDEwZjRiZWM0ODRmYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNTI0MzUzOC9vcmlnaW5hbF9jMWY1YTM2ZDg3MjAwNDQ5ZjQ3MDEwZjRiZWM0ODRmYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjI0MDAsImhlaWdodCI6MjQwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==",
+     "width": 1200,
+     "height": 800
+    },
+    "large": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNTI0MzUzOC9vcmlnaW5hbF9jMWY1YTM2ZDg3MjAwNDQ5ZjQ3MDEwZjRiZWM0ODRmYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjE4MDAsImhlaWdodCI6MTgwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNTI0MzUzOC9vcmlnaW5hbF9jMWY1YTM2ZDg3MjAwNDQ5ZjQ3MDEwZjRiZWM0ODRmYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjM2MDAsImhlaWdodCI6MzYwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==",
+     "width": 1800,
+     "height": 1200
+    },
+    "square": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNTI0MzUzOC9vcmlnaW5hbF9jMWY1YTM2ZDg3MjAwNDQ5ZjQ3MDEwZjRiZWM0ODRmYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNTI0MzUzOC9vcmlnaW5hbF9jMWY1YTM2ZDg3MjAwNDQ5ZjQ3MDEwZjRiZWM0ODRmYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjI0MDAsImhlaWdodCI6MjQwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==",
+     "width": 1200,
+     "height": 800
+    }
+   },
+   "_links": {
+    "self": {
+     "href": "https://api.are.na/v3/blocks/35243538"
+    },
+    "user": {
+     "href": "https://api.are.na/v3/users/lok"
+    },
+    "connections": {
+     "href": "https://api.are.na/v3/blocks/35243538/connections"
+    },
+    "comments": {
+     "href": "https://api.are.na/v3/blocks/35243538/comments"
+    }
+   },
+   "connection": {
+    "id": 105528133,
+    "position": 74,
+    "pinned": false,
+    "metadata": null,
+    "connected_at": "2026-09-13T23:47:37Z",
+    "connected_by": {
+     "id": 1579216,
+     "type": "User",
+     "name": "Dante Smith",
+     "slug": "dante-smith",
+     "avatar": null,
+     "initials": "DS",
+     "_links": {
+      "self": {
+       "href": "https://api.are.na/v3/users/dante-smith"
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": 50394883,
+   "type": "Image",
+   "created_at": "2026-09-13T21:12:47Z",
+   "updated_at": "2026-09-13T21:17:11Z",
+   "base_type": "Block",
+   "title": "Flowers at Brunch",
+   "description": null,
+   "state": "available",
+   "visibility": "public",
+   "comment_count": 0,
+   "metadata": null,
+   "user": {
+    "id": 1579216,
+    "type": "User",
+    "name": "Dante Smith",
+    "slug": "dante-smith",
+    "avatar": null,
+    "initials": "DS"
+   },
+   "source": null,
+   "image": {
+    "alt_text": null,
+    "blurhash": "L8B3mKaeE1xu0KWCoMWVcFt7s;V[",
+    "width": 1000,
+    "height": 731,
+    "src": "https://d2w9rnfcy7mm78.cloudfront.net/50394883/original_6ca3726af8735e1ca86ff8fd2f680550.jpeg?1789333969",
+    "aspect_ratio": 1.368,
+    "content_type": "image/jpeg",
+    "filename": "6ca3726af8735e1ca86ff8fd2f680550.jpeg",
+    "file_size": 79629,
+    "updated_at": "2026-09-13T21:12:49Z",
+    "small": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM5NDg4My9vcmlnaW5hbF82Y2EzNzI2YWY4NzM1ZTFjYTg2ZmY4ZmQyZjY4MDU1MC5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo0MDAsImhlaWdodCI6NDAwLCJmaXQiOiJpbnNpZGUiLCJ3aXRob3V0RW5sYXJnZW1lbnQiOnRydWV9LCJ3ZWJwIjp7InF1YWxpdHkiOjc1fSwianBlZyI6eyJxdWFsaXR5Ijo3NX0sInJvdGF0ZSI6bnVsbH19",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM5NDg4My9vcmlnaW5hbF82Y2EzNzI2YWY4NzM1ZTFjYTg2ZmY4ZmQyZjY4MDU1MC5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo4MDAsImhlaWdodCI6ODAwLCJmaXQiOiJpbnNpZGUiLCJ3aXRob3V0RW5sYXJnZW1lbnQiOnRydWV9LCJ3ZWJwIjp7InF1YWxpdHkiOjc1fSwianBlZyI6eyJxdWFsaXR5Ijo3NX0sInJvdGF0ZSI6bnVsbH19",
+     "width": 400,
+     "height": 292
+    },
+    "medium": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM5NDg4My9vcmlnaW5hbF82Y2EzNzI2YWY4NzM1ZTFjYTg2ZmY4ZmQyZjY4MDU1MC5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoxMjAwLCJoZWlnaHQiOjEyMDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM5NDg4My9vcmlnaW5hbF82Y2EzNzI2YWY4NzM1ZTFjYTg2ZmY4ZmQyZjY4MDU1MC5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoyNDAwLCJoZWlnaHQiOjI0MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "width": 1200,
+     "height": 877
+    },
+    "large": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM5NDg4My9vcmlnaW5hbF82Y2EzNzI2YWY4NzM1ZTFjYTg2ZmY4ZmQyZjY4MDU1MC5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoxODAwLCJoZWlnaHQiOjE4MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM5NDg4My9vcmlnaW5hbF82Y2EzNzI2YWY4NzM1ZTFjYTg2ZmY4ZmQyZjY4MDU1MC5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjozNjAwLCJoZWlnaHQiOjM2MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "width": 1800,
+     "height": 1316
+    },
+    "square": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM5NDg4My9vcmlnaW5hbF82Y2EzNzI2YWY4NzM1ZTFjYTg2ZmY4ZmQyZjY4MDU1MC5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoxMjAwLCJoZWlnaHQiOjEyMDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM5NDg4My9vcmlnaW5hbF82Y2EzNzI2YWY4NzM1ZTFjYTg2ZmY4ZmQyZjY4MDU1MC5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoyNDAwLCJoZWlnaHQiOjI0MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "width": 1200,
+     "height": 877
+    }
+   },
+   "_links": {
+    "self": {
+     "href": "https://api.are.na/v3/blocks/50394883"
+    },
+    "user": {
+     "href": "https://api.are.na/v3/users/dante-smith"
+    },
+    "connections": {
+     "href": "https://api.are.na/v3/blocks/50394883/connections"
+    },
+    "comments": {
+     "href": "https://api.are.na/v3/blocks/50394883/comments"
+    }
+   },
+   "connection": {
+    "id": 105521289,
+    "position": 73,
+    "pinned": false,
+    "metadata": null,
+    "connected_at": "2026-09-13T21:12:47Z",
+    "connected_by": {
+     "id": 1579216,
+     "type": "User",
+     "name": "Dante Smith",
+     "slug": "dante-smith",
+     "avatar": null,
+     "initials": "DS",
+     "_links": {
+      "self": {
+       "href": "https://api.are.na/v3/users/dante-smith"
+      }
+     }
+    }
+   }
+  },
+  null,
+  {
+   "id": "not-a-number",
+   "type": "Image"
+  },
+  {
+   "id": 4929062,
+   "type": "Text",
+   "created_at": "2019-08-31T07:19:21Z",
+   "updated_at": "2026-09-12T18:24:50Z",
+   "base_type": "Block",
+   "title": null,
+   "description": null,
+   "state": "available",
+   "visibility": "public",
+   "comment_count": 0,
+   "metadata": null,
+   "user": {
+    "id": 9240,
+    "type": "User",
+    "name": "Chad Mazzola",
+    "slug": "chad-mazzola",
+    "avatar": "https://static.avatars.are.na/9240/large_687f070973ac4cdccf0262fe66cbb074.jpg?1505123818",
+    "initials": "CM"
+   },
+   "source": null,
+   "content": {
+    "markdown": "\u201cAny fact becomes important when it\u2019s connected to another.\u201d \n\n\u2015 Umberto Eco, *Foucault\u2019s Pendulum*",
+    "html": "<p>\u201cAny fact becomes important when it\u2019s connected to another.\u201d </p>\n\n<p>\u2015 Umberto Eco, <em>Foucault\u2019s Pendulum</em></p>",
+    "plain": "\u201cAny fact becomes important when it\u2019s connected to another.\u201d \n\u2015 Umberto Eco, Foucault\u2019s Pendulum"
+   },
+   "_links": {
+    "self": {
+     "href": "https://api.are.na/v3/blocks/4929062"
+    },
+    "user": {
+     "href": "https://api.are.na/v3/users/chad-mazzola"
+    },
+    "connections": {
+     "href": "https://api.are.na/v3/blocks/4929062/connections"
+    },
+    "comments": {
+     "href": "https://api.are.na/v3/blocks/4929062/comments"
+    }
+   },
+   "connection": {
+    "id": 7664444,
+    "position": 125,
+    "pinned": false,
+    "metadata": null,
+    "connected_at": "2019-09-24T14:28:24Z",
+    "connected_by": {
+     "id": 15,
+     "type": "User",
+     "name": "Charles Broskoski",
+     "slug": "charles-broskoski",
+     "avatar": "https://static.avatars.are.na/15/large_f91bdac52d14ef988c9818884d6865db.jpg?1616377630",
+     "initials": "CB",
+     "_links": {
+      "self": {
+       "href": "https://api.are.na/v3/users/charles-broskoski"
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": 50345476,
+   "type": "Link",
+   "created_at": "2026-09-11T19:13:36Z",
+   "updated_at": "2026-09-11T19:27:39Z",
+   "base_type": "Block",
+   "title": "SearchSystem\u2122",
+   "description": {
+    "markdown": "An ever-growing collection of references and tools for designers. Curated by Julien Van Havere,\u2026",
+    "html": "<p>An ever-growing collection of references and tools for designers. Curated by Julien Van Havere,\u2026</p>",
+    "plain": "An ever-growing collection of references and tools for designers. Curated by Julien Van Havere,\u2026"
+   },
+   "state": "available",
+   "visibility": "public",
+   "comment_count": 0,
+   "metadata": null,
+   "user": {
+    "id": 270451,
+    "type": "User",
+    "name": "casa luca",
+    "slug": "casa-luca",
+    "avatar": "https://static.avatars.are.na/270451/large_1c47ec7d5af5b0860722c5227045fa40.jpeg?1785664453",
+    "initials": "cl"
+   },
+   "source": {
+    "url": "https://searchsystem.co/",
+    "title": "SearchSystem\u2122",
+    "provider": {
+     "name": "searchsystem.co",
+     "url": "https://searchsystem.co"
+    }
+   },
+   "image": {
+    "alt_text": null,
+    "blurhash": "LXI=S;ITMxW?%LWXNGoc00%Mx]ae",
+    "width": 3456,
+    "height": 1900,
+    "src": "https://d2w9rnfcy7mm78.cloudfront.net/50345476/original_fccbd8370bec02c6110031bd70c46d4f.jpeg?1789154022",
+    "aspect_ratio": 1.8189,
+    "content_type": "image/jpeg",
+    "filename": "fccbd8370bec02c6110031bd70c46d4f.jpeg",
+    "file_size": 374938,
+    "updated_at": "2026-09-11T19:13:42Z",
+    "small": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM0NTQ3Ni9vcmlnaW5hbF9mY2NiZDgzNzBiZWMwMmM2MTEwMDMxYmQ3MGM0NmQ0Zi5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo0MDAsImhlaWdodCI6NDAwLCJmaXQiOiJpbnNpZGUiLCJ3aXRob3V0RW5sYXJnZW1lbnQiOnRydWV9LCJ3ZWJwIjp7InF1YWxpdHkiOjc1fSwianBlZyI6eyJxdWFsaXR5Ijo3NX0sInJvdGF0ZSI6bnVsbH19",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM0NTQ3Ni9vcmlnaW5hbF9mY2NiZDgzNzBiZWMwMmM2MTEwMDMxYmQ3MGM0NmQ0Zi5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo4MDAsImhlaWdodCI6ODAwLCJmaXQiOiJpbnNpZGUiLCJ3aXRob3V0RW5sYXJnZW1lbnQiOnRydWV9LCJ3ZWJwIjp7InF1YWxpdHkiOjc1fSwianBlZyI6eyJxdWFsaXR5Ijo3NX0sInJvdGF0ZSI6bnVsbH19",
+     "width": 400,
+     "height": 220
+    },
+    "medium": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM0NTQ3Ni9vcmlnaW5hbF9mY2NiZDgzNzBiZWMwMmM2MTEwMDMxYmQ3MGM0NmQ0Zi5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoxMjAwLCJoZWlnaHQiOjEyMDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM0NTQ3Ni9vcmlnaW5hbF9mY2NiZDgzNzBiZWMwMmM2MTEwMDMxYmQ3MGM0NmQ0Zi5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoyNDAwLCJoZWlnaHQiOjI0MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "width": 1200,
+     "height": 660
+    },
+    "large": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM0NTQ3Ni9vcmlnaW5hbF9mY2NiZDgzNzBiZWMwMmM2MTEwMDMxYmQ3MGM0NmQ0Zi5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoxODAwLCJoZWlnaHQiOjE4MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM0NTQ3Ni9vcmlnaW5hbF9mY2NiZDgzNzBiZWMwMmM2MTEwMDMxYmQ3MGM0NmQ0Zi5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjozNjAwLCJoZWlnaHQiOjM2MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "width": 1800,
+     "height": 990
+    },
+    "square": {
+     "src": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM0NTQ3Ni9vcmlnaW5hbF9mY2NiZDgzNzBiZWMwMmM2MTEwMDMxYmQ3MGM0NmQ0Zi5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoxMjAwLCJoZWlnaHQiOjEyMDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "src_2x": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI1MDM0NTQ3Ni9vcmlnaW5hbF9mY2NiZDgzNzBiZWMwMmM2MTEwMDMxYmQ3MGM0NmQ0Zi5qcGVnIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoyNDAwLCJoZWlnaHQiOjI0MDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=",
+     "width": 1200,
+     "height": 660
+    }
+   },
+   "content": null,
+   "_links": {
+    "self": {
+     "href": "https://api.are.na/v3/blocks/50345476"
+    },
+    "user": {
+     "href": "https://api.are.na/v3/users/casa-luca"
+    },
+    "connections": {
+     "href": "https://api.are.na/v3/blocks/50345476/connections"
+    },
+    "comments": {
+     "href": "https://api.are.na/v3/blocks/50345476/comments"
+    }
+   },
+   "connection": {
+    "id": 105424667,
+    "position": 62,
+    "pinned": false,
+    "metadata": null,
+    "connected_at": "2026-09-11T19:27:39Z",
+    "connected_by": {
+     "id": 1579216,
+     "type": "User",
+     "name": "Dante Smith",
+     "slug": "dante-smith",
+     "avatar": null,
+     "initials": "DS",
+     "_links": {
+      "self": {
+       "href": "https://api.are.na/v3/users/dante-smith"
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": 5,
+   "type": "Weird",
+   "title": 42,
+   "image": {
+    "small": "oops"
+   }
+  }
+ ],
+ "meta": {
+  "current_page": 1,
+  "per_page": 7,
+  "total_count": 74,
+  "has_more_pages": true
+ }
+}
