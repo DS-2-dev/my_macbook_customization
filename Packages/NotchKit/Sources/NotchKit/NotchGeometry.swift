@@ -85,9 +85,20 @@ public enum NotchGeometry {
         case trailing
     }
 
+    /// The expanded panel, in the panel's top-left coordinates: `size`,
+    /// centered on the collapsed shape and hanging from its top.
+    public static func expandedSurface(around shape: CGRect, size: CGSize) -> CGRect {
+        CGRect(x: shape.midX - size.width / 2, y: shape.minY, width: size.width, height: size.height)
+    }
+
     /// `rect`, given in screen coordinates, as seen from inside `panel` with
     /// SwiftUI's top-left origin.
     public static func rect(_ rect: CGRect, inPanel panel: CGRect) -> CGRect {
         CGRect(x: rect.minX - panel.minX, y: panel.maxY - rect.maxY, width: rect.width, height: rect.height)
+    }
+
+    /// The reverse: a rect in the panel's top-left coordinates, back on the screen.
+    public static func rect(_ rect: CGRect, fromPanel panel: CGRect) -> CGRect {
+        CGRect(x: panel.minX + rect.minX, y: panel.maxY - rect.maxY, width: rect.width, height: rect.height)
     }
 }

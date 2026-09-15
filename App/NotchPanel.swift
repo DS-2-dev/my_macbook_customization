@@ -23,6 +23,7 @@ final class NotchPanel: NSPanel {
         // The panel is much bigger than what it draws; until something in it
         // wants the pointer, clicks go through to whatever is underneath.
         ignoresMouseEvents = true
+        acceptsMouseMovedEvents = true
     }
 
     override var canBecomeKey: Bool { false }

@@ -3,19 +3,34 @@ import NotchKit
 import OSLog
 import SwiftUI
 
-/// Owns the panel and keeps it over the notch as displays come and go.
+/// Owns the panel, keeps it over the notch as displays come and go, and opens
+/// it while the pointer is over it.
 @MainActor
 final class NotchController {
     private let panel = NotchPanel()
     private let layout = NotchLayout()
+    private let content = TrackingView()
     private var observers: [(NotificationCenter, NSObjectProtocol)] = []
+    private var monitors: [Any] = []
     private let log = Logger(subsystem: "com.dantesmith.NowPlayingNotch", category: "geometry")
+
+    /// Screen rects the pointer has to be in: the notch and the wing while
+    /// collapsed, the whole surface while expanded.
+    private var collapsedHotRect: CGRect = .zero
+    private var expandedHotRect: CGRect = .zero
+    /// A hover change waiting out its delay, and which way it's going.
+    private var pendingHover: Task<Void, Never>?
+    private var pendingTarget: Bool?
 
     func start() {
         let host = NSHostingView(rootView: NotchView(layout: layout))
         // The panel's size is fixed by us, not negotiated with SwiftUI.
         host.sizingOptions = []
-        panel.contentView = host
+        host.autoresizingMask = [.width, .height]
+        content.addSubview(host)
+        content.onPointerChange = { [weak self] in self?.pointerMoved() }
+        panel.contentView = content
+        host.frame = content.bounds
 
         relayout()
         panel.orderFrontRegardless()
@@ -26,6 +41,21 @@ final class NotchController {
         observe(NSWorkspace.shared.notificationCenter, NSWorkspace.didWakeNotification)
         observe(NSWorkspace.shared.notificationCenter, NSWorkspace.screensDidWakeNotification)
         observe(DistributedNotificationCenter.default(), Notification.Name("com.apple.screenIsUnlocked"))
+
+        // Collapsed, the panel lets the mouse through, so only a monitor sees
+        // the pointer arrive. Global for when it's over other apps, local for
+        // when it's over the panel itself.
+        if let global = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged], handler: { [weak self] _ in
+            MainActor.assumeIsolated { self?.pointerMoved() }
+        }) {
+            monitors.append(global)
+        }
+        if let local = NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved], handler: { [weak self] event in
+            MainActor.assumeIsolated { self?.pointerMoved() }
+            return event
+        }) {
+            monitors.append(local)
+        }
     }
 
     private func observe(_ center: NotificationCenter, _ name: Notification.Name, object: AnyObject? = nil) {
@@ -34,6 +64,8 @@ final class NotchController {
         }
         observers.append((center, token))
     }
+
+    // MARK: Geometry
 
     private func relayout() {
         guard let screen = Self.preferredScreen() else {
@@ -56,18 +88,134 @@ final class NotchController {
             panel.orderFrontRegardless()
         }
 
+        let shape = NotchGeometry.rect(metrics.rect, inPanel: frame)
         layout.kind = metrics.kind
-        layout.shape = NotchGeometry.rect(metrics.rect, inPanel: frame)
+        layout.shape = shape
+
+        // Hot zones: the whole notch plus the wing while collapsed, so hovering
+        // the hardware notch itself opens it; the surface while expanded.
+        var collapsed = shape
+        if metrics.kind == .notch {
+            collapsed = collapsed.union(NotchGeometry.restingBody(notch: shape, wing: NotchStyle.wingWidth, side: NotchStyle.wingSide))
+        }
+        let expanded = NotchGeometry.expandedSurface(around: shape, size: NotchStyle.expandedSize)
+        collapsedHotRect = reachingTheTopEdge(NotchGeometry.rect(collapsed, fromPanel: frame), of: screen, kind: metrics.kind)
+        expandedHotRect = reachingTheTopEdge(NotchGeometry.rect(expanded, fromPanel: frame), of: screen, kind: metrics.kind)
+        content.trackedRect = CGRect(x: expanded.minX, y: frame.height - expanded.maxY, width: expanded.width, height: expanded.height)
+
         log.notice("""
             \(screen.localizedName, privacy: .public) \(metrics.kind == .notch ? "notch" : "pill", privacy: .public) \
             shape=\(NSStringFromRect(metrics.rect), privacy: .public) panel=\(NSStringFromRect(frame), privacy: .public)
             """)
     }
 
+    /// The pointer pinned against the top of the screen can report the very
+    /// last row, which a rect ending at the edge doesn't contain.
+    private func reachingTheTopEdge(_ rect: CGRect, of screen: NSScreen, kind: NotchMetrics.Kind) -> CGRect {
+        guard kind == .notch else { return rect }
+        var tall = rect
+        tall.size.height += 2
+        return tall
+    }
+
     /// The display with a notch if there is one, otherwise the one with the menu bar.
     private static func preferredScreen() -> NSScreen? {
         NSScreen.screens.first { $0.safeAreaInsets.top > 0 && $0.auxiliaryTopLeftArea != nil }
             ?? NSScreen.screens.first
+    }
+
+    // MARK: Hover
+
+    private func pointerMoved() {
+        guard layout.hasSomethingToShow else { return setHovering(false) }
+        let hot = layout.expanded ? expandedHotRect : collapsedHotRect
+        setHovering(hot.contains(NSEvent.mouseLocation))
+    }
+
+    private func setHovering(_ hovering: Bool) {
+        if hovering == layout.expanded {
+            // Back where it already is: drop any change that was waiting.
+            pendingHover?.cancel()
+            pendingHover = nil
+            pendingTarget = nil
+            return
+        }
+        // Already on its way there; let the delay run.
+        guard pendingTarget != hovering else { return }
+        pendingHover?.cancel()
+        pendingTarget = hovering
+        let delay = hovering ? NotchStyle.hoverInDelay : NotchStyle.hoverOutDelay
+        pendingHover = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled, let self else { return }
+            self.pendingTarget = nil
+            self.layout.expanded = hovering
+            hovering ? self.open() : self.close()
+            self.log.notice("hover \(hovering ? "open" : "closed", privacy: .public)")
+        }
+    }
+
+    // MARK: Opening and closing
+
+    /// The steps currently running, cancelled when the pointer changes its mind.
+    private var sequence: Task<Void, Never>?
+
+    /// Out to the full width, then down, then the text. A step that's
+    /// already done is skipped along with its wait, so coming back in
+    /// halfway through a close picks up from wherever it got to.
+    private func open() {
+        sequence?.cancel()
+        // Open, the panel takes the pointer so clicks land on it.
+        panel.ignoresMouseEvents = false
+        if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+            layout.widthOpen = true
+            layout.heightOpen = true
+            layout.showsDetails = true
+            return
+        }
+        sequence = Task { [weak self] in
+            guard let self else { return }
+            if !self.layout.widthOpen {
+                withAnimation(NotchStyle.widenSpring) { self.layout.widthOpen = true }
+                guard await Self.wait(NotchStyle.dropDelay) else { return }
+            }
+            if !self.layout.heightOpen {
+                withAnimation(NotchStyle.dropSpring) { self.layout.heightOpen = true }
+                guard await Self.wait(NotchStyle.textInDelay) else { return }
+            }
+            withAnimation(NotchStyle.textIn) { self.layout.showsDetails = true }
+        }
+    }
+
+    /// The same backwards, with the text gone before anything moves.
+    private func close() {
+        sequence?.cancel()
+        // Closed, it lets everything through to what's underneath.
+        panel.ignoresMouseEvents = true
+        if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+            layout.showsDetails = false
+            layout.heightOpen = false
+            layout.widthOpen = false
+            return
+        }
+        sequence = Task { [weak self] in
+            guard let self else { return }
+            if self.layout.showsDetails {
+                withAnimation(NotchStyle.textOut) { self.layout.showsDetails = false }
+                guard await Self.wait(NotchStyle.liftDelay) else { return }
+            }
+            if self.layout.heightOpen {
+                withAnimation(NotchStyle.liftSpring) { self.layout.heightOpen = false }
+                guard await Self.wait(NotchStyle.narrowDelay) else { return }
+            }
+            withAnimation(NotchStyle.narrowSpring) { self.layout.widthOpen = false }
+        }
+    }
+
+    /// Sleeps; false if the sequence was cancelled meanwhile.
+    private static func wait(_ seconds: TimeInterval) async -> Bool {
+        try? await Task.sleep(for: .seconds(seconds))
+        return !Task.isCancelled
     }
 }
 
@@ -81,4 +229,10 @@ final class NotchLayout {
     /// False when nothing has played recently: then nothing is drawn and the
     /// notch is left as it is. Always true until real data arrives in step 4.
     var hasSomethingToShow = true
+    /// The pointer is over it, so it's opening or open.
+    var expanded = false
+    /// The steps of opening, each animated in turn by the controller.
+    var widthOpen = false
+    var heightOpen = false
+    var showsDetails = false
 }

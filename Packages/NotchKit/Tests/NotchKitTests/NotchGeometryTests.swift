@@ -77,6 +77,20 @@ import Testing
         #expect(leading.maxX == notch.midX)
     }
 
+    @Test func expandedSurfaceHangsCenteredFromTheNotch() {
+        let notch = CGRect(x: 147.5, y: 0, width: 185, height: 32)
+        let surface = NotchGeometry.expandedSurface(around: notch, size: CGSize(width: 380, height: 132))
+        #expect(surface == CGRect(x: 50, y: 0, width: 380, height: 132))
+        #expect(surface.midX == notch.midX)
+    }
+
+    @Test func panelCoordinatesRoundTrip() {
+        let panel = CGRect(x: 624, y: 897, width: 480, height: 220)
+        let notch = CGRect(x: 771.5, y: 1085, width: 185, height: 32)
+        let inside = NotchGeometry.rect(notch, inPanel: panel)
+        #expect(NotchGeometry.rect(inside, fromPanel: panel) == notch)
+    }
+
     @Test func panelStaysOnScreen() {
         let metrics = NotchMetrics(
             kind: .pill,
