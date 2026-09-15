@@ -24,6 +24,9 @@ final class NotchPanel: NSPanel {
         // wants the pointer, clicks go through to whatever is underneath.
         ignoresMouseEvents = true
         acceptsMouseMovedEvents = true
+        // No zoom when it appears at launch or comes back after unlocking:
+        // it's standing in for hardware, which doesn't animate in.
+        animationBehavior = .none
     }
 
     override var canBecomeKey: Bool { false }
