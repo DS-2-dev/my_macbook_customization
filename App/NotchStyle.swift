@@ -95,13 +95,13 @@ enum NotchStyle {
     static let hoverInDelay: TimeInterval = 0.08
     static let hoverOutDelay: TimeInterval = 0.12
 
-    // MARK: Placeholder (until step 4)
+    // MARK: Art
 
-    static let placeholderArt = LinearGradient(
-        colors: [Color(red: 0.95, green: 0.55, blue: 0.35), Color(red: 0.55, green: 0.25, blue: 0.6)],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    /// The art slot before its image lands: there straight away, so the text
+    /// never has to move over for it.
+    static let artPlaceholder = Color.white.opacity(0.08)
+    /// The image fading into the slot.
+    static let artFade = Animation.easeOut(duration: 0.3)
 
     // MARK: No notch
 

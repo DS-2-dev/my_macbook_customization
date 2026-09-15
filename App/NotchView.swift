@@ -10,13 +10,15 @@ struct NotchView: View {
 
     var body: some View {
         let track = layout.track
+        // Art that failed to load is treated as none: text only, with the note.
+        let hasArt = track?.art != nil && !layout.artworkFailed
         let frames = NotchFrames(
             kind: layout.kind,
             shape: layout.shape,
             wide: layout.widthOpen,
             tall: layout.heightOpen,
             visible: track != nil,
-            hasArt: track?.art != nil
+            hasArt: hasArt
         )
         ZStack(alignment: .topLeading) {
             if NotchStyle.showsPanelBounds {
@@ -31,7 +33,7 @@ struct NotchView: View {
             // black, whatever the timing of the steps.
             ZStack(alignment: .topLeading) {
                 if let track {
-                    artwork(track, frames)
+                    artwork(frames, hasArt: hasArt)
                     if layout.showsDetails {
                         details(track)
                             .frame(width: frames.text.width, height: frames.text.height, alignment: .leading)
@@ -53,13 +55,24 @@ struct NotchView: View {
     }
 
     @ViewBuilder
-    private func artwork(_ track: NowPlaying, _ frames: NotchFrames) -> some View {
-        if track.art != nil {
-            // Step 5 draws the real image here.
-            RoundedRectangle(cornerRadius: frames.artCornerRadius, style: .continuous)
-                .fill(NotchStyle.placeholderArt)
-                .frame(width: frames.art.width, height: frames.art.height)
-                .offset(x: frames.art.minX, y: frames.art.minY)
+    private func artwork(_ frames: NotchFrames, hasArt: Bool) -> some View {
+        if hasArt {
+            // The slot is there straight away; the image fades into it once
+            // it has loaded, and nothing waits on it.
+            ZStack {
+                Rectangle()
+                    .fill(NotchStyle.artPlaceholder)
+                if let image = layout.artwork {
+                    Image(nsImage: image)
+                        .resizable()
+                        .interpolation(.high)
+                        .aspectRatio(contentMode: .fill)
+                        .transition(.opacity)
+                }
+            }
+            .frame(width: frames.art.width, height: frames.art.height)
+            .clipShape(RoundedRectangle(cornerRadius: frames.artCornerRadius, style: .continuous))
+            .offset(x: frames.art.minX, y: frames.art.minY)
         } else if !layout.heightOpen {
             // No art: a small note in the wing, gone once the panel opens to text only.
             Image(systemName: NotchStyle.noArtSymbol)

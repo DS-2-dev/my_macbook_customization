@@ -11,6 +11,7 @@ final class NotchController {
     private let layout = NotchLayout()
     private let content = TrackingView()
     private let feed = NowPlayingFeed()
+    private let artwork = ArtworkLoader()
     private var observers: [(NotificationCenter, NSObjectProtocol)] = []
     private var monitors: [Any] = []
     private let log = Logger(subsystem: "com.dantesmith.NowPlayingNotch", category: "geometry")
@@ -58,6 +59,14 @@ final class NotchController {
             monitors.append(local)
         }
 
+        artwork.onChange = { [weak self] image, failed in
+            guard let self else { return }
+            let fade = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? nil : NotchStyle.artFade
+            withAnimation(fade) {
+                self.layout.artwork = image
+                self.layout.artworkFailed = failed
+            }
+        }
         feed.onUpdate = { [weak self] answer in self?.show(answer) }
         feed.start()
     }
@@ -69,6 +78,8 @@ final class NotchController {
     /// out even when the answer itself hasn't changed.
     private func show(_ answer: NowPlaying?) {
         let next = answer.flatMap { $0.isRecent(at: .now, within: NowPlayingFeed.recentWindow) ? $0 : nil }
+        // Every answer, even an unchanged one: art that failed gets retried.
+        artwork.show(next?.art)
         guard next != layout.track else { return }
         if next == nil, layout.expanded {
             // Nothing left to show under the pointer: close before going.
@@ -254,6 +265,10 @@ final class NotchLayout {
     /// and then nothing is drawn and the notch is left as it is.
     var track: NowPlaying?
     var hasSomethingToShow: Bool { track != nil }
+    /// The track's art once it has loaded; the slot shows empty until then.
+    var artwork: NSImage?
+    /// The track has art but it wouldn't load: shown as text only.
+    var artworkFailed = false
     /// The pointer is over it, so it's opening or open.
     var expanded = false
     /// The steps of opening, each animated in turn by the controller.
