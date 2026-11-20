@@ -8,12 +8,15 @@ Things I've built for my Mac.
   of the side of the notch; hover it to open, click to go to the track.
 - [`arena-widget/`](arena-widget) is a desktop widget that rotates through the
   blocks of an Are.na channel, a new selection every 3 minutes.
+- [`album-widget/`](album-widget) is a desktop widget that shows the cover of
+  the album I played last, from the same service as the notch app. A
+  background app reloads it when the album changes.
 
 Each folder is a complete Xcode project with its own README covering the
-build, the install, and the setup. Both build with a free Apple ID ("Sign to
-Run Locally") and use nothing that needs a provisioning profile.
+build, the install, and the setup. All three build with a free Apple ID
+("Sign to Run Locally") and use nothing that needs a provisioning profile.
 
-The now-playing service the notch app reads isn't in this repo. It's a
-separate Cloudflare Worker, and it's where the Last.fm key lives.
+The now-playing service the notch app and the album widget read isn't in this
+repo. It's a separate Cloudflare Worker, and it's where the Last.fm key lives.
 
 Each project keeps its full commit history (added with `git subtree`).
