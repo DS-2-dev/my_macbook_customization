@@ -1,0 +1,88 @@
+# Generates AlbumWidget.xcodeproj. Run `xcodegen` after editing this file.
+name: AlbumWidget
+options:
+  bundleIdPrefix: com.dantesmith
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
+    ARCHS: arm64
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "2"
+    # Free Apple ID: "Sign to Run Locally" (ad-hoc). No team, no provisioning profile.
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: NO
+    DEAD_CODE_STRIPPING: YES
+
+targets:
+  AlbumWidget:
+    type: application
+    platform: macOS
+    sources: [AlbumWidget, Shared]
+    dependencies:
+      - target: AlbumWidgetExtension
+    info:
+      path: AlbumWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Album Widget
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSApplicationCategoryType: public.app-category.music
+        # Runs in the background: no Dock icon, no menu bar.
+        LSUIElement: true
+        CFBundleURLTypes:
+          - CFBundleURLName: com.dantesmith.AlbumWidget
+            CFBundleURLSchemes: [album-widget]
+    entitlements:
+      path: AlbumWidget/AlbumWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dantesmith.AlbumWidget
+        PRODUCT_NAME: AlbumWidget
+
+  AlbumWidgetExtension:
+    type: app-extension
+    platform: macOS
+    sources: [AlbumWidgetExtension, Shared]
+    dependencies:
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    info:
+      path: AlbumWidgetExtension/Info.plist
+      properties:
+        CFBundleDisplayName: Last Album
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: AlbumWidgetExtension/AlbumWidgetExtension.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        # Without this the sandbox silently drops every request.
+        com.apple.security.network.client: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dantesmith.AlbumWidget.Extension
+        PRODUCT_NAME: AlbumWidgetExtension
+        SKIP_INSTALL: YES
+
+schemes:
+  AlbumWidget:
+    build:
+      targets:
+        AlbumWidget: all
+        AlbumWidgetExtension: all
+    run:
+      config: Debug
+    archive:
+      config: Release
